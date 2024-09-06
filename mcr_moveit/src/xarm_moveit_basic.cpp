@@ -40,7 +40,7 @@ int main(int argc, char * argv[])
   auto const draw_title = [&moveit_visual_tools](auto text) {
     auto const text_pose = [] {
       auto msg = Eigen::Isometry3d::Identity();
-      msg.translation().z() = 1.0;  // Place text 1m above the base link
+      msg.translation().z() = 0.750;  // Place text 1m above the base link
       return msg;
     }();
     moveit_visual_tools.publishText(text_pose, text, rviz_visual_tools::WHITE,
@@ -96,7 +96,7 @@ int main(int argc, char * argv[])
     geometry_msgs::msg::Pose box_pose;
     box_pose.orientation.w = 1.0;  // We can leave out the x, y, and z components of the quaternion since they are initialized to 0
     box_pose.position.x = 0.2;
-    box_pose.position.y = 0.0;
+    box_pose.position.y = 0.15;
     box_pose.position.z = 0.075;
 
     collision_object.primitives.push_back(primitive);
