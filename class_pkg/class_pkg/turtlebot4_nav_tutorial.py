@@ -19,7 +19,7 @@ class BatteryMonitor(Node):
 
     def __init__(self, lock):
         super().__init__('battery_monitor')
-
+        self.get_logger().info("Initializing battery monitor node with namespace: " + self.get_namespace())
         self.lock = lock
 
         # Subscribe to the /battery_state topic
@@ -28,6 +28,8 @@ class BatteryMonitor(Node):
             'battery_state',
             self.battery_state_callback,
             qos_profile_sensor_data)
+        
+        self.get_logger().info("Battery monitor listening to: " + self.battery_state_subscriber.topic_name)
 
     # Callbacks
     def battery_state_callback(self, batt_msg: BatteryState):
@@ -68,6 +70,8 @@ def main(args=None):
     thread = Thread(target=battery_monitor.thread_function, daemon=True)
     thread.start()
 
+    navigator.info('Initializing navigation patrol node. Namespace: ' + navigator.get_namespace())
+    
     # Start on dock
     if not navigator.getDockedStatus():
         navigator.info('Docking before intialising pose')
