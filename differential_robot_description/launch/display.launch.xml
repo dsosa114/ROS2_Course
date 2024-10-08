@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+
+    <let name="urdf_path" value="$(find-pkg-share differential_robot_description)/urdf/differential_robot.urdf.xacro"/>
+    <let name="rviz_config_path" value="$(find-pkg-share differential_robot_description)/rviz/urdf_config.rviz"/>
+    <node exec="robot_state_publisher" pkg="robot_state_publisher" output="log" respawn="false" respawn_delay="0">
+        <param name="robot_description" value="$(command 'xacro $(var urdf_path)')"/>
+    </node>
+    <node exec="joint_state_publisher_gui" pkg="joint_state_publisher_gui" output="log"/>
+    <node exec="rviz2" pkg="rviz2" args="-d $(var rviz_config_path)" output="screen" respawn="false" respawn_delay="0"/>
+</launch>
