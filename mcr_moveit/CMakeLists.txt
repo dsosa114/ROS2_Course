@@ -10,8 +10,13 @@ find_package(ament_cmake REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(moveit_visual_tools REQUIRED)
+find_package(moveit_core REQUIRED)
+find_package(moveit_ros_warehouse REQUIRED)
 
 add_executable(xarm_moveit_basic src/xarm_moveit_basic.cpp)
+
+# target_link_libraries(xarm_moveit_basic moveit_ros_warehouse)
+
 target_include_directories(xarm_moveit_basic PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
@@ -21,6 +26,7 @@ ament_target_dependencies(
   "moveit_ros_planning_interface"
   "moveit_visual_tools"
   "rclcpp"
+  "moveit_ros_warehouse"
 )
 
 install(TARGETS xarm_moveit_basic
