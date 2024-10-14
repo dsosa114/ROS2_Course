@@ -4,10 +4,12 @@
    <xacro:arg name="name" default="ur"/>
    <!-- import main macro -->
    <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
+   <!-- Import macros -->
+   <xacro:include filename="$(find robotiq_description)/urdf/robotiq_2f_85_macro.urdf.xacro" />
 
    <!-- possible 'ur_type' values: ur3, ur3e, ur5, ur5e, ur10, ur10e, ur16e, ur20, ur30 -->
    <!-- the default value should raise an error in case this was called without defining the type -->
-   <xacro:arg name="ur_type" default="ur5x"/>
+   <xacro:arg name="ur_type" default="ur10e"/>
 
    <!-- parameters -->
    <xacro:arg name="tf_prefix" default="" />
@@ -42,7 +44,7 @@
    <xacro:arg name="tool_tcp_port" default="54321" />
 
      <!-- Simulation parameters -->
-   <xacro:arg name="use_fake_hardware" default="false" />
+   <xacro:arg name="use_fake_hardware" default="true" />
    <xacro:arg name="fake_sensor_commands" default="false" />
    <xacro:arg name="sim_gazebo" default="false" />
    <xacro:arg name="sim_ignition" default="false" />
@@ -120,4 +122,8 @@
       </plugin>
     </gazebo>
   </xacro:if>
+
+  <xacro:robotiq_gripper name="RobotiqGripperHardwareInterface" prefix="" parent="$(arg tf_prefix)tool0" use_fake_hardware="$(arg use_fake_hardware)">
+        <origin xyz="0 0 0" rpy="0 0 0" />
+  </xacro:robotiq_gripper>
 </robot>
