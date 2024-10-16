@@ -206,15 +206,26 @@
             </inertial>
         </link>
 
-        <joint name="${prefix}robotiq_85_left_inner_knuckle_joint" type="continuous">
-            <parent link="${prefix}robotiq_85_base_link" />
-            <child link="${prefix}robotiq_85_left_inner_knuckle_link" />
-            <axis xyz="0 -1 0" />
-            <origin xyz="0.0127 0.0 0.06142" rpy="0 0 0" />
-            <limit lower="-0.05" upper="0.80285" velocity="0.5" effort="50"/>
-            <mimic joint="${prefix}robotiq_85_left_knuckle_joint" />
-            <dynamics damping="1.0" friction="1.0"/>
-        </joint>
+        <xacro:if value="${fixed}">
+            <joint name="${prefix}robotiq_85_left_inner_knuckle_joint" type="fixed">
+                <parent link="${prefix}robotiq_85_base_link" />
+                <child link="${prefix}robotiq_85_left_inner_knuckle_link" />
+                <origin xyz="0.0127 0.0 0.06142" rpy="0 0 0" />
+                <dynamics damping="1.0" friction="1.0"/>
+            </joint>
+        </xacro:if>
+        <xacro:unless value="${fixed}">
+            <joint name="${prefix}robotiq_85_left_inner_knuckle_joint" type="continuous">
+                <parent link="${prefix}robotiq_85_base_link" />
+                <child link="${prefix}robotiq_85_left_inner_knuckle_link" />
+                <axis xyz="0 -1 0" />
+                <origin xyz="0.0127 0.0 0.06142" rpy="0 0 0" />
+                <limit lower="-0.05" upper="0.80285" velocity="0.5" effort="50"/>
+                <mimic joint="${prefix}robotiq_85_left_knuckle_joint" />
+                <dynamics damping="1.0" friction="1.0"/>
+            </joint>
+        </xacro:unless>
+        
 
         <!-- Robotiq right_inner_knuckle -->
         <link name="${prefix}robotiq_85_right_inner_knuckle_link">
@@ -235,15 +246,26 @@
             </inertial>
         </link>
 
-        <joint name="${prefix}robotiq_85_right_inner_knuckle_joint" type="continuous">
-            <parent link="${prefix}robotiq_85_base_link" />
-            <child link="${prefix}robotiq_85_right_inner_knuckle_link" />
-            <axis xyz="0 -1 0" />
-            <origin xyz="-0.0127 0.0 0.06142" rpy="0 0 0" />
-            <limit lower="-0.05" upper="0.80285" velocity="0.5" effort="50"/>
-            <mimic joint="${prefix}robotiq_85_left_knuckle_joint" multiplier="-1" />
-            <dynamics damping="1.0" friction="1.0"/>
-        </joint>
+        <xacro:if value="${fixed}">
+            <joint name="${prefix}robotiq_85_right_inner_knuckle_joint" type="fixed">
+                <parent link="${prefix}robotiq_85_base_link" />
+                <child link="${prefix}robotiq_85_right_inner_knuckle_link" />
+                <origin xyz="-0.0127 0.0 0.06142" rpy="0 0 0" />
+                <dynamics damping="1.0" friction="1.0"/>
+            </joint>
+        </xacro:if>
+        <xacro:unless value="${fixed}">
+            <joint name="${prefix}robotiq_85_right_inner_knuckle_joint" type="continuous">
+                <parent link="${prefix}robotiq_85_base_link" />
+                <child link="${prefix}robotiq_85_right_inner_knuckle_link" />
+                <axis xyz="0 -1 0" />
+                <origin xyz="-0.0127 0.0 0.06142" rpy="0 0 0" />
+                <limit lower="-0.05" upper="0.80285" velocity="0.5" effort="50"/>
+                <mimic joint="${prefix}robotiq_85_left_knuckle_joint" multiplier="-1" />
+                <dynamics damping="1.0" friction="1.0"/>
+            </joint>
+        </xacro:unless>
+        
 
         <!-- Robotiq left_finger_tip -->
         <link name="${prefix}robotiq_85_left_finger_tip_link">
@@ -282,15 +304,26 @@
             </inertial>
         </link>
 
-        <joint name="${prefix}robotiq_85_left_finger_tip_joint" type="continuous">
-            <parent link="${prefix}robotiq_85_left_finger_link" />
-            <child link="${prefix}robotiq_85_left_finger_tip_link" />
-            <axis xyz="0 -1 0" />
-            <origin xyz="0.00563134 0.0 0.04718515" rpy="0 0 0" />
-            <limit lower="-0.80285" upper="0.05" velocity="0.5" effort="50"/>
-            <mimic joint="${prefix}robotiq_85_left_knuckle_joint" multiplier="-1" />
-            <dynamics damping="1.0" friction="1.0"/>
-        </joint>
+        <xacro:if value="${fixed}">
+            <joint name="${prefix}robotiq_85_left_finger_tip_joint" type="fixed">
+                <parent link="${prefix}robotiq_85_left_finger_link" />
+                <child link="${prefix}robotiq_85_left_finger_tip_link" />
+                <origin xyz="0.00563134 0.0 0.04718515" rpy="0 0 0" />
+                <dynamics damping="1.0" friction="1.0"/>
+            </joint>
+        </xacro:if>
+        <xacro:unless value="${fixed}">
+            <joint name="${prefix}robotiq_85_left_finger_tip_joint" type="continuous">
+                <parent link="${prefix}robotiq_85_left_finger_link" />
+                <child link="${prefix}robotiq_85_left_finger_tip_link" />
+                <axis xyz="0 -1 0" />
+                <origin xyz="0.00563134 0.0 0.04718515" rpy="0 0 0" />
+                <limit lower="-0.80285" upper="0.05" velocity="0.5" effort="50"/>
+                <mimic joint="${prefix}robotiq_85_left_knuckle_joint" multiplier="-1" />
+                <dynamics damping="1.0" friction="1.0"/>
+            </joint>
+        </xacro:unless>
+        
 
         <!-- Robotiq right_finger_tip -->
         <link name="${prefix}robotiq_85_right_finger_tip_link">
@@ -329,14 +362,26 @@
             </inertial>
         </link>
 
-        <joint name="${prefix}robotiq_85_right_finger_tip_joint" type="continuous">
-            <parent link="${prefix}robotiq_85_right_finger_link" />
-            <child link="${prefix}robotiq_85_right_finger_tip_link" />
-            <axis xyz="0 -1 0" />
-            <origin xyz="-0.00563134 0.0 0.04718515" rpy="0 0 0" />
-            <limit lower="-0.80285" upper="0.05" velocity="0.5" effort="50"/>
-            <mimic joint="${prefix}robotiq_85_left_knuckle_joint" />
-            <dynamics damping="1.0" friction="1.0"/>
-        </joint>
+        <xacro:if value="${fixed}">
+            <joint name="${prefix}robotiq_85_right_finger_tip_joint" type="fixed">
+                <parent link="${prefix}robotiq_85_right_finger_link" />
+                <child link="${prefix}robotiq_85_right_finger_tip_link" />
+                <origin xyz="-0.00563134 0.0 0.04718515" rpy="0 0 0" />
+                <dynamics damping="1.0" friction="1.0"/>
+            </joint>
+        </xacro:if>
+        <xacro:unless value="${fixed}">
+            <joint name="${prefix}robotiq_85_right_finger_tip_joint" type="continuous">
+                <parent link="${prefix}robotiq_85_right_finger_link" />
+                <child link="${prefix}robotiq_85_right_finger_tip_link" />
+                <axis xyz="0 -1 0" />
+                <origin xyz="-0.00563134 0.0 0.04718515" rpy="0 0 0" />
+                <limit lower="-0.80285" upper="0.05" velocity="0.5" effort="50"/>
+                <mimic joint="${prefix}robotiq_85_left_knuckle_joint" />
+                <dynamics damping="1.0" friction="1.0"/>
+            </joint>
+        </xacro:unless>
+
+        
     </xacro:macro>
 </robot>
