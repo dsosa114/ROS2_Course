@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:macro name="robotiq_camera" params="prefix parent">
+        <link name="${prefix}robotiq_camera">
+            <visual>
+                <geometry>
+                    <mesh filename="file://$(find custom_robotiq_description)/meshes/robotiq_wrist_camera.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+                <origin xyz="-37.875e-03 -37.875e-03 -6.5e-03" rpy="0 0 0" />
+            </visual>
+            <collision>
+                <geometry>
+                    <mesh filename="file://$(find custom_robotiq_description)/meshes/robotiq_wrist_camera.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+                <origin xyz="-37.875e-03 -37.875e-03 -6.5e-03" rpy="0 0 0" />
+            </collision>
+            <inertial>
+                <origin xyz="-6.5e-03 6.6e-03 4.0e-03" rpy="0 0 0" />
+                <mass value="0.195" />
+                <inertia ixx="6.69695624e-05" ixy="5.21511788e-09" ixz="-2.74383009e-08" 
+                        iyy="7.85088161e-05" iyz="5.41105193e-07" izz="1.41819717e-04"/>
+            </inertial>
+        </link>
+    
+        <joint name="${prefix}robotiq_camera_joint" type="fixed">
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <parent link="${parent}"/>
+            <child link="robotiq_camera"/>
+        </joint>
+    
+        <gazebo reference="robotiq_camera">
+            <mu1>0.9</mu1>
+            <mu2>0.9</mu2>
+            <material>Gazebo/Black</material>
+        </gazebo>
+    </xacro:macro>
+</robot>

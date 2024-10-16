@@ -1,11 +1,15 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="robotiq_gripper">
     <!-- parameters -->
+    <xacro:arg name="prefix" default="" />
     <xacro:arg name="bringup" default="true" />
 
     <!-- Import macros -->
     <xacro:include filename="$(find custom_robotiq_description)/urdf/robotiq_2f85_macro.urdf.xacro" />
+    <xacro:include filename="$(find custom_robotiq_description)/urdf/robotiq_camera.xacro" />
 
     <link name="world" />
-    <xacro:robotiq_gripper name="RobotiqGripperHardwareInterface" prefix="" parent="world" bringup="$(arg bringup)"/>
+    <xacro:robotiq_camera prefix="$(arg prefix)" parent="world"/>
+    
+    <xacro:robotiq_gripper name="RobotiqGripperHardwareInterface" prefix="$(arg prefix)" parent="robotiq_camera" bringup="$(arg bringup)" fixed="true"/>
 </robot>
