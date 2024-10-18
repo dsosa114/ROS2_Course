@@ -8,6 +8,7 @@
    <!-- <xacro:include filename="$(find robotiq_description)/urdf/robotiq_2f_85_macro.urdf.xacro" /> -->
    <xacro:include filename="$(find custom_robotiq_description)/urdf/robotiq_2f85_macro.urdf.xacro" />
    <xacro:include filename="$(find custom_robotiq_description)/urdf/robotiq_camera.xacro" />
+   <xacro:include filename="$(find custom_ur_description)/urdf/robot_stand.xacro" />
 
    <!-- possible 'ur_type' values: ur3, ur3e, ur5, ur5e, ur10, ur10e, ur16e, ur20, ur30 -->
    <!-- the default value should raise an error in case this was called without defining the type -->
@@ -16,7 +17,7 @@
    <!-- parameters -->
    <xacro:arg name="tf_prefix" default="" />
    <xacro:arg name="joint_limit_params" default="$(find ur_description)/config/$(arg ur_type)/joint_limits.yaml"/>
-   <xacro:arg name="kinematics_params" default="$(find ur_description)/config/$(arg ur_type)/default_kinematics.yaml"/>
+   <xacro:arg name="kinematics_params" default="$(find custom_ur_description)/config/$(arg ur_type)/default_kinematics.yaml"/>
    <xacro:arg name="physical_params" default="$(find ur_description)/config/$(arg ur_type)/physical_parameters.yaml"/>
    <xacro:arg name="visual_params" default="$(find ur_description)/config/$(arg ur_type)/visual_parameters.yaml"/>
    <xacro:arg name="transmission_hw_interface" default=""/>
@@ -53,7 +54,7 @@
    <xacro:arg name="simulation_controllers" default="" />
 
    <!-- initial position for simulations (Fake Hardware, Gazebo, Ignition) -->
-   <xacro:arg name="initial_positions_file" default="$(find ur_description)/config/initial_positions.yaml"/>
+   <xacro:arg name="initial_positions_file" default="$(find custom_ur_description)/config/initial_positions.yaml"/>
 
    <!-- convert to property to use substitution in function -->
    <xacro:property name="initial_positions_file" default="$(arg initial_positions_file)"/>
@@ -62,45 +63,7 @@
    <link name="world" />
 
    <!-- pedestal -->
-   <xacro:property name="p_w" value="0.728"/>
-   <xacro:property name="p_d" value="0.752"/>
-   <xacro:property name="p_h" value="0.863"/>
-   <xacro:property name="p_m" value="37.1"/>
-  
-   <link name="vention_pedestal">
-      <inertial>
-        <origin xyz="-379.5e-03 407.0e-03 -320.0e-03" rpy="${pi/2} 0.0 0.0"/>
-        <mass value="${p_m}"/>
-        <inertia ixx="${p_m*0.083333*(p_d*p_d + p_h*p_h)}" ixy="0.0" ixz="0.0" iyy="${p_m*0.083333*(p_w*p_w + p_h*p_h)}" iyz="0.0" izz="${p_m*0.083333*(p_w*p_w + p_d*p_d)}"/>
-      </inertial>
-      <visual>
-        <origin xyz="-379.5e-03 407.0e-03 -320.0e-03" rpy="${pi/2} 0.0 0.0"/>
-        <geometry>
-          <mesh filename="file://$(find custom_ur_description)/meshes/vention_pedestal.stl" scale="0.001 0.001 0.001"/>
-        </geometry>
-      </visual>
-      <collision>
-        <origin xyz="-379.5e-03 407.0e-03 -320.0e-03" rpy="${pi/2} 0.0 0.0"/>
-        <geometry>
-          <mesh filename="file://$(find custom_ur_description)/meshes/vention_pedestal.stl" scale="0.001 0.001 0.001"/>
-        </geometry>
-      </collision>
-      
-   </link>
-
-   <joint name="world_pedestal_joint" type="fixed">
-    <parent link="world"/>
-    <child link="vention_pedestal"/>
-    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
-   </joint>
-   
-   <!-- <joint name="pedestal_base_joint" type="fixed">
-    <parent link="vention_pedestal"/>
-    <child link="child_link"/>
-    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
-   </joint>
-    -->
-
+   <xacro:robot_stand parent="world" />
 
    <!-- arm -->
    <xacro:ur_robot
@@ -140,7 +103,7 @@
      script_sender_port="$(arg script_sender_port)"
      trajectory_port="$(arg trajectory_port)"
      >
-     <origin xyz="0 0 0.838" rpy="0 0 0" />          <!-- position robot in the world -->
+     <origin xyz="0 0 0.845" rpy="0 0 0" />          <!-- position robot in the world -->
    </xacro:ur_robot>
 
    <xacro:if value="$(arg sim_gazebo)">
@@ -176,6 +139,6 @@
   </xacro:robotiq_gripper> -->
   <xacro:robotiq_camera prefix="$(arg tf_prefix)" parent="$(arg tf_prefix)tool0"/>
     
-  <xacro:robotiq_gripper name="RobotiqGripperHardwareInterface" prefix="" parent="robotiq_camera" bringup="$(arg sim_gazebo)" fixed="true"/>
+  <xacro:robotiq_gripper name="RobotiqGripperHardwareInterface" prefix="" parent="robotiq_camera" bringup="$(arg sim_gazebo)" fixed="false"/>
 
 </robot>

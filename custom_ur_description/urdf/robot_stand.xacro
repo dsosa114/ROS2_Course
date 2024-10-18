@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:macro name="robot_stand" params="parent">
+        <xacro:property name="p_w" value="0.728"/>
+        <xacro:property name="p_d" value="0.752"/>
+        <xacro:property name="p_h" value="0.863"/>
+        <xacro:property name="p_m" value="37.1"/>
+        
+        <link name="vention_pedestal">
+            <inertial>
+                <!-- <origin xyz="-379.5e-03 407.0e-03 -320.0e-03" rpy="${pi/2} 0.0 0.0"/> -->
+                <origin xyz="0 0 ${p_h/2}" rpy="0.0 0.0 0.0"/>
+                <mass value="${p_m}"/>
+                <inertia ixx="${p_m*0.083333*(p_d*p_d + p_h*p_h)}" ixy="0.0" ixz="0.0" iyy="${p_m*0.083333*(p_w*p_w + p_h*p_h)}" iyz="0.0" izz="${p_m*0.083333*(p_w*p_w + p_d*p_d)}"/>
+                <!-- <inertia ixx="4.26192502" ixy="0.0" ixz="0.0" iyy="3.59362541" iyz="0.0" izz="2.73158794"/> -->
+            </inertial>
+            <visual>
+                <origin xyz="-407.0e-03 -379.5e-03 -320.0e-03" rpy="${pi/2} 0.0 ${pi/2}"/>
+                <geometry>
+                    <mesh filename="file://$(find custom_ur_description)/meshes/vention_pedestal.stl"/>
+                </geometry>
+                <material name="blue">
+                    <color rgba="0.117647059 0.317647059 0.482352941 1.0"/>
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="-407.0e-03 -379.5e-03 -315.0e-03" rpy="${pi/2} 0.0 ${pi/2}"/>
+                <geometry>
+                    <mesh filename="file://$(find custom_ur_description)/meshes/vention_pedestal.stl"/>
+                </geometry>
+            </collision>
+            
+        </link>
+
+        <joint name="world_pedestal_joint" type="fixed">
+            <parent link="${parent}"/>
+            <child link="vention_pedestal"/>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+        </joint>
+
+        <gazebo reference="vention_pedestal">
+            <mu1>0.9</mu1>
+            <mu2>0.9</mu2>
+            <material>Gazebo/Blue</material>
+        </gazebo>
+    </xacro:macro>
+</robot>

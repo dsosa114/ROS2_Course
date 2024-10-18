@@ -7,6 +7,9 @@
                     <mesh filename="file://$(find custom_robotiq_description)/meshes/robotiq_wrist_camera.stl" scale="0.001 0.001 0.001"/>
                 </geometry>
                 <origin xyz="-37.875e-03 -37.875e-03 -6.5e-03" rpy="0 0 0" />
+                <material name="black">
+                    <color rgba="0.1 0.1 0.1 1.0"/>
+                </material>
             </visual>
             <collision>
                 <geometry>
@@ -15,10 +18,11 @@
                 <origin xyz="-37.875e-03 -37.875e-03 -6.5e-03" rpy="0 0 0" />
             </collision>
             <inertial>
-                <origin xyz="-6.5e-03 6.6e-03 4.0e-03" rpy="0 0 0" />
+                <!-- <origin xyz="-44.375e-03 -32.275e-03 -2.5e-03" rpy="0 0 0" /> -->
+                <origin xyz="0 0 0" rpy="0 0 0" /> 
                 <mass value="0.195" />
-                <inertia ixx="6.69695624e-05" ixy="5.21511788e-09" ixz="-2.74383009e-08" 
-                        iyy="7.85088161e-05" iyz="5.41105193e-07" izz="1.41819717e-04"/>
+                <inertia ixx="1.1187203649e-04" ixy="6.31862766e-07" ixz="-1.84407399e-07" 
+                        iyy="7.803770329e-05" iyz="2.7553716364e-06" izz="1.79318669337e-04"/>
             </inertial>
         </link>
     
