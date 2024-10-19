@@ -52,6 +52,7 @@
    <xacro:arg name="sim_gazebo" default="false" />
    <xacro:arg name="sim_ignition" default="false" />
    <xacro:arg name="simulation_controllers" default="" />
+   <xacro:arg name="use_fixed_gripper" default="false" />
 
    <!-- initial position for simulations (Fake Hardware, Gazebo, Ignition) -->
    <xacro:arg name="initial_positions_file" default="$(find custom_ur_description)/config/initial_positions.yaml"/>
@@ -106,6 +107,25 @@
      <origin xyz="0 0 0.845" rpy="0 0 0" />          <!-- position robot in the world -->
    </xacro:ur_robot>
 
+   <!-- <xacro:robotiq_gripper name="RobotiqGripperHardwareInterface" prefix="" parent="$(arg tf_prefix)tool0" use_fake_hardware="$(arg use_fake_hardware)">
+        <origin xyz="0 0 0" rpy="0 0 0" />
+    </xacro:robotiq_gripper> -->
+    <xacro:robotiq_camera prefix="$(arg tf_prefix)" parent="$(arg tf_prefix)tool0"/>
+      
+    <xacro:robotiq_gripper name="RobotiqGripperHardwareInterface" prefix="" parent="robotiq_camera" bringup="false" fixed="$(arg use_fixed_gripper)"/>
+
+    <!-- END EFFECTOR -->
+    <xacro:unless value="$(arg use_fixed_gripper)">
+      <xacro:include filename="$(find custom_robotiq_description)/urdf/robotiq_2f85_ros2_control.xacro" />
+      <!-- Load ROS2_CONTROL -->
+      <ros2_control name="gripper" type="system">
+        <hardware>
+          <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+        </hardware>
+        <xacro:EEF_ros2_control/>
+      </ros2_control>
+
+    </xacro:unless>
    <xacro:if value="$(arg sim_gazebo)">
     <!-- Gazebo plugins -->
     <gazebo reference="world">
@@ -115,9 +135,10 @@
         <robot_sim_type>gazebo_ros2_control/GazeboSystem</robot_sim_type>
         <!-- UR10e Controller -->
         <!-- <parameters>$(arg simulation_controllers)</parameters> -->
-        <parameters>$(find custom_ur_description)/config/ur10e/controller.yaml</parameters>
+        <!-- <parameters>$(find custom_ur_description)/config/ur10e/controller.yaml</parameters> -->
+        <parameters>$(find custom_ur_description)/config/custom_ur_controllers.yaml</parameters>
         <!-- End-Effector Controller (if needed) -->
-        <parameters>$(find custom_robotiq_description)/config/controller.yaml</parameters>
+        <!-- <parameters>$(find custom_robotiq_description)/config/controller.yaml</parameters> -->
       </plugin>
     </gazebo>
   </xacro:if>
@@ -133,12 +154,6 @@
       </plugin>
     </gazebo>
   </xacro:if>
-
-  <!-- <xacro:robotiq_gripper name="RobotiqGripperHardwareInterface" prefix="" parent="$(arg tf_prefix)tool0" use_fake_hardware="$(arg use_fake_hardware)">
-        <origin xyz="0 0 0" rpy="0 0 0" />
-  </xacro:robotiq_gripper> -->
-  <xacro:robotiq_camera prefix="$(arg tf_prefix)" parent="$(arg tf_prefix)tool0"/>
-    
-  <xacro:robotiq_gripper name="RobotiqGripperHardwareInterface" prefix="" parent="robotiq_camera" bringup="$(arg sim_gazebo)" fixed="false"/>
+  
 
 </robot>

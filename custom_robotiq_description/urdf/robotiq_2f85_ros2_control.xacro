@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-    <xacro:macro name="EEF_ros2_control" params="prefix">
+    <xacro:macro name="EEF_ros2_control" params="">
         
-        <joint name="${prefix}robotiq_85_left_knuckle_joint">
+        <joint name="robotiq_85_left_knuckle_joint">
             <command_interface name="position">
                 <param name="min">-0.05</param>
                 <param name="max">0.80285</param>
@@ -18,7 +18,7 @@
             <state_interface name="effort"/>
         </joint>
     
-        <joint name="${prefix}robotiq_85_right_knuckle_joint">
+        <joint name="robotiq_85_right_knuckle_joint">
             <command_interface name="position">
                 <param name="min">-0.05</param>
                 <param name="max">0.80285</param>
@@ -34,7 +34,7 @@
             <state_interface name="effort"/>
         </joint>
     
-        <joint name="${prefix}robotiq_85_left_inner_knuckle_joint">
+        <joint name="robotiq_85_left_inner_knuckle_joint">
             <command_interface name="position">
                 <param name="min">-0.05</param>
                 <param name="max">0.80285</param>
@@ -50,7 +50,7 @@
             <state_interface name="effort"/>
         </joint>
     
-        <joint name="${prefix}robotiq_85_right_inner_knuckle_joint">
+        <joint name="robotiq_85_right_inner_knuckle_joint">
             <command_interface name="position">
                 <param name="min">-0.05</param>
                 <param name="max">0.80285</param>
@@ -66,7 +66,7 @@
             <state_interface name="effort"/>
         </joint>
     
-        <joint name="${prefix}robotiq_85_left_finger_tip_joint">
+        <joint name="robotiq_85_left_finger_tip_joint">
             <command_interface name="position">
                 <param name="min">-0.80285</param>
                 <param name="max">0.05</param>
@@ -82,7 +82,7 @@
             <state_interface name="effort"/>
         </joint>
     
-        <joint name="${prefix}robotiq_85_right_finger_tip_joint">
+        <joint name="robotiq_85_right_finger_tip_joint">
             <command_interface name="position">
                 <param name="min">-0.80285</param>
                 <param name="max">0.05</param>

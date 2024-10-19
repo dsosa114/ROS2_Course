@@ -1,5 +1,8 @@
 controller_manager:
   ros__parameters:
+
+    update_rate: 250 #Hz
+
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
@@ -26,6 +29,38 @@ controller_manager:
 
     ur_configuration_controller:
       type: ur_controllers/URConfigurationController
+
+    robotiq_controller_LKJ:
+      type: position_controllers/GripperActionController
+    robotiq_controller_RKJ:
+      type: position_controllers/GripperActionController
+    robotiq_controller_LIKJ:
+      type: position_controllers/GripperActionController
+    robotiq_controller_RIKJ:
+      type: position_controllers/GripperActionController
+    robotiq_controller_LFTJ:
+      type: position_controllers/GripperActionController
+    robotiq_controller_RFTJ:
+      type: position_controllers/GripperActionController
+
+robotiq_controller_LKJ:
+  ros__parameters:
+    joint: robotiq_85_left_knuckle_joint
+robotiq_controller_RKJ:
+  ros__parameters:
+    joint: robotiq_85_right_knuckle_joint
+robotiq_controller_LIKJ:
+  ros__parameters:
+    joint: robotiq_85_left_inner_knuckle_joint
+robotiq_controller_RIKJ:
+  ros__parameters:
+    joint: robotiq_85_right_inner_knuckle_joint
+robotiq_controller_LFTJ:
+  ros__parameters:
+    joint: robotiq_85_left_finger_tip_joint
+robotiq_controller_RFTJ:
+  ros__parameters:
+    joint: robotiq_85_right_finger_tip_joint
 
 speed_scaling_state_broadcaster:
   ros__parameters:
@@ -62,13 +97,12 @@ joint_trajectory_controller:
       - wrist_1_joint
       - wrist_2_joint
       - wrist_3_joint
-      - robotiq_85_left_knuckle_joint
     command_interfaces:
       - position
     state_interfaces:
       - position
       - velocity
-    state_publish_rate: 100.0
+    state_publish_rate: 250.0
     action_monitor_rate: 20.0
     allow_partial_joints_goal: false
     constraints:
@@ -81,45 +115,6 @@ joint_trajectory_controller:
       wrist_2_joint: { trajectory: 0.2, goal: 0.1 }
       wrist_3_joint: { trajectory: 0.2, goal: 0.1 }
       
-# joint_trajectory_controller:
-#   ros__parameters:
-#     joints:
-#       - $(var tf_prefix)shoulder_pan_joint
-#       - $(var tf_prefix)shoulder_lift_joint
-#       - $(var tf_prefix)elbow_joint
-#       - $(var tf_prefix)wrist_1_joint
-#       - $(var tf_prefix)wrist_2_joint
-#       - $(var tf_prefix)wrist_3_joint
-#       - robotiq_85_left_knuckle_joint
-#       - robotiq_85_right_knuckle_joint
-#       - robotiq_85_left_inner_knuckle_joint
-#       - robotiq_85_right_inner_knuckle_joint
-#       - robotiq_85_left_finger_tip_joint
-#       - robotiq_85_right_finger_tip_joint
-#     command_interfaces:
-#       - position
-#     state_interfaces:
-#       - position
-#       - velocity
-#     state_publish_rate: 100.0
-#     action_monitor_rate: 20.0
-#     allow_partial_joints_goal: true
-#     constraints:
-#       stopped_velocity_tolerance: 0.2
-#       goal_time: 0.0
-#       $(var tf_prefix)shoulder_pan_joint: { trajectory: 0.2, goal: 0.1 }
-#       $(var tf_prefix)shoulder_lift_joint: { trajectory: 0.2, goal: 0.1 }
-#       $(var tf_prefix)elbow_joint: { trajectory: 0.2, goal: 0.1 }
-#       $(var tf_prefix)wrist_1_joint: { trajectory: 0.2, goal: 0.1 }
-#       $(var tf_prefix)wrist_2_joint: { trajectory: 0.2, goal: 0.1 }
-#       $(var tf_prefix)wrist_3_joint: { trajectory: 0.2, goal: 0.1 }
-#       robotiq_85_left_knuckle_joint: { trajectory: 0.2, goal: 0.1 }
-#       # robotiq_85_right_knuckle_joint: { trajectory: 0.2, goal: 0.1 }
-#       # robotiq_85_left_inner_knuckle_joint: { trajectory: 0.2, goal: 0.1 }
-#       # robotiq_85_right_inner_knuckle_joint: { trajectory: 0.2, goal: 0.1 }
-#       # robotiq_85_left_finger_tip_joint: { trajectory: 0.2, goal: 0.1 }
-#       # robotiq_85_right_finger_tip_joint: { trajectory: 0.2, goal: 0.1 }
-
 
 scaled_joint_trajectory_controller:
   ros__parameters:

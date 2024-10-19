@@ -9,6 +9,19 @@ controller_manager:
     joint_trajectory_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
+    # robotiq_controller_LKJ:
+    #   type: position_controllers/GripperActionController
+    # robotiq_controller_RKJ:
+    #   type: position_controllers/GripperActionController
+    # robotiq_controller_LIKJ:
+    #   type: position_controllers/GripperActionController
+    # robotiq_controller_RIKJ:
+    #   type: position_controllers/GripperActionController
+    # robotiq_controller_LFTJ:
+    #   type: position_controllers/GripperActionController
+    # robotiq_controller_RFTJ:
+    #   type: position_controllers/GripperActionController
+
 joint_trajectory_controller:
   ros__parameters:
     joints:
@@ -30,3 +43,22 @@ joint_trajectory_controller:
     constraints:
       stopped_velocity_tolerance: 0.0
       goal_time: 0.0
+
+# robotiq_controller_LKJ:
+#   ros__parameters:
+#     joint: robotiq_85_left_knuckle_joint
+# robotiq_controller_RKJ:
+#   ros__parameters:
+#     joint: robotiq_85_right_knuckle_joint
+# robotiq_controller_LIKJ:
+#   ros__parameters:
+#     joint: robotiq_85_left_inner_knuckle_joint
+# robotiq_controller_RIKJ:
+#   ros__parameters:
+#     joint: robotiq_85_right_inner_knuckle_joint
+# robotiq_controller_LFTJ:
+#   ros__parameters:
+#     joint: robotiq_85_left_finger_tip_joint
+# robotiq_controller_RFTJ:
+#   ros__parameters:
+#     joint: robotiq_85_right_finger_tip_joint
