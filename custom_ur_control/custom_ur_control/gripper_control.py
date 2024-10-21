@@ -11,6 +11,7 @@ import asyncio
 
 from control_msgs.action import GripperCommand
 from action_msgs.msg import GoalStatus
+from custom_ur_interfaces.action import GripperPosition
 
 
 class GripperPositionControl(Node):
@@ -28,7 +29,7 @@ class GripperPositionControl(Node):
         # Create an action server in this same node
         self._action_server = ActionServer(
             self,
-            GripperCommand,
+            GripperPosition,
             '/robotiq_controller_full',
             self.execute_callback
         )
@@ -45,17 +46,23 @@ class GripperPositionControl(Node):
         self.get_logger().info('Executing goal on /robotiq_controller_full...')
         # Relay the goal received from the server to both action clients
         goal_msg = goal_handle.request
-        goal_msg_inv = copy.deepcopy(goal_msg)
-        goal_msg_inv.command.position = -1. * goal_msg.command.position
+        command = goal_msg.action
+        self.get_logger().info(f'Received command: {command}')
+        
+        goal_msg.command.position
+        goal_msg_inv = copy.deepcopy(goal_msg.command)
+        goal_msg_inv.position = -1. * goal_msg.command.position
+
+        print(goal_msg_inv)
         
         futures = [
             # Send goals to action clients and wait for their results
-            self._send_goal_to_client(self._action_client_LKJ, goal_msg, 'server_LKJ'),
+            self._send_goal_to_client(self._action_client_LKJ, goal_msg.command, 'server_LKJ'),
             self._send_goal_to_client(self._action_client_RKJ, goal_msg_inv, 'server_RKJ'),
-            self._send_goal_to_client(self._action_client_LIKJ, goal_msg, 'server_LIKJ'),
+            self._send_goal_to_client(self._action_client_LIKJ, goal_msg.command, 'server_LIKJ'),
             self._send_goal_to_client(self._action_client_RIKJ, goal_msg_inv, 'server_RIKJ'),
             self._send_goal_to_client(self._action_client_LFTJ, goal_msg_inv, 'server_LFTJ'),
-            self._send_goal_to_client(self._action_client_RFTJ, goal_msg, 'server_RFTJ')
+            self._send_goal_to_client(self._action_client_RFTJ, goal_msg.command, 'server_RFTJ')
         ]
         # Wait for both clients' futures to complete
         results = await self._wait_for_futures(futures)
