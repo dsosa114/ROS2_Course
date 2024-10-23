@@ -140,6 +140,14 @@
         <!-- End-Effector Controller (if needed) -->
         <!-- <parameters>$(find custom_robotiq_description)/config/controller.yaml</parameters> -->
       </plugin>
+      <plugin name="contact_sensor_plugin" filename="libgazebo_ros_contact.so">
+        <ros>
+          <namespace>/</namespace>
+          <remapping>gz_contacts:=contacts</remapping>
+        </ros>
+        <robotNamespace/>
+        <alwaysOn>true</alwaysOn>
+      </plugin>
     </gazebo>
   </xacro:if>
 
