@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<robot name="big_bazu">
+    <link name="world"/>
+
+    <link name="base_link">
+        <visual>
+            <geometry>
+                <cylinder radius="0.2" length="0.05"/>
+            </geometry>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <material name="">
+                <color rgba=""/>
+            </material>            
+        </visual>
+    </link>
+    
+    <joint name="base_joint" type="revolute">
+        <parent link="world"/>
+        <child link="base_link"/>
+        <axis xyz="0 0 0"/>
+        <limit lower="-3.14159" upper="3.14159" velocity="50.0" effort="1000.0"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+    
+    
+</robot>
