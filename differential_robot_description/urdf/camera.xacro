@@ -7,19 +7,19 @@
 
     <link name="camera_link">
         <visual>
-            <xacro:box_inertia m="0.1" l="${camera_lenght}" w="${camera_width}" h="${camera_height}" xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/> 
             <geometry>
                 <box size="${camera_lenght} ${camera_width} ${camera_height}"/>
             </geometry>
             <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
             <material name="blue"/>
-            <collision>
-                <geometry>
-                    <box size="${camera_lenght} ${camera_width} ${camera_height}"/>
-                </geometry>
-                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
-            </collision>
         </visual>
+        <collision>
+            <geometry>
+                <box size="${camera_lenght} ${camera_width} ${camera_height}"/>
+            </geometry>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+        </collision>
+        <xacro:box_inertia m="0.1" l="${camera_lenght}" w="${camera_width}" h="${camera_height}" xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/> 
     </link>
 
     <!-- generate an optical frame 

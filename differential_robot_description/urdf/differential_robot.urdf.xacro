@@ -7,5 +7,5 @@
     <xacro:include filename="$(find differential_robot_description)/urdf/mobile_base_gazebo.xacro"/>
 
     <xacro:include filename="$(find differential_robot_description)/urdf/camera.xacro"/>
-    
+    <xacro:include filename="$(find differential_robot_description)/urdf/lidar.xacro"/>
 </robot>
