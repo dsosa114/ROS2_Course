@@ -25,14 +25,14 @@
         <parent link="base_link"/>
         <child link="lidar_link"/>
         <axis xyz="0 0 1" />
-        <origin xyz="0 0 ${base_height}" rpy="0 0 0"/>
+        <origin xyz="0 0 ${base_height + lidar_lenght / 2.0}" rpy="0 0 0"/>
     </joint>
 
     <gazebo reference="lidar_link">
         <material>Gazebo/Black</material>
         <sensor type="ray" name="lidar_sensor">
             <pose>0 0 0 0 0 0</pose>
-            <visualize>false</visualize>
+            <visualize>true</visualize>
             <update_rate>40</update_rate>
             <ray>
                 <scan>
