@@ -8,7 +8,7 @@ from ament_index_python.packages import get_package_share_path
 def generate_launch_description():
 
     urdf_path = os.path.join(get_package_share_path('mark_one_arm_description'), 
-                             'urdf', 'mark_one_arm.urdf')
+                             'urdf', 'mark_one_arm.urdf.xacro')
     
     rviz_config_path = os.path.join(get_package_share_path('mark_one_arm_description'), 
                              'rviz', 'urdf_config.rviz')

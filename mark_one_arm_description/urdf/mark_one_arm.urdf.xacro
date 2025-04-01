@@ -2,7 +2,7 @@
 <!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
      Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
-<robot name="mark_one_arm">
+<robot name="mark_one_arm" xmlns:xacro="http://www.ros.org/wiki/xacro">
   <!-- create link fixed to the "world" -->
   <link name="world" />
   <link name="base_link">
@@ -72,7 +72,7 @@
     <parent link="base_link" />
     <child link="Link_1" />
     <axis xyz="0 0 -1" />
-    <limit lower="0" upper="4.18" effort="1" velocity="3" />
+    <limit lower="-${pi}" upper="${pi}" effort="1" velocity="3" />
   </joint>
   <link name="Link_2">
     <inertial>
@@ -107,7 +107,7 @@
     <parent link="Link_1" />
     <child link="Link_2" />
     <axis xyz="0 1 0" />
-    <limit lower="0" upper="4.18" effort="1" velocity="3" />
+    <limit lower="-${pi/2}" upper="${pi/2}" effort="1" velocity="3" />
   </joint>
   <link name="Link_3">
     <inertial>
@@ -142,7 +142,7 @@
     <parent link="Link_2" />
     <child link="Link_3" />
     <axis xyz="0 1 0" />
-    <limit lower="0" upper="4.18" effort="1" velocity="3" />
+    <limit lower="-${pi/2}" upper="${pi/2}" effort="1" velocity="3" />
   </joint>
   <link name="Link_4">
     <inertial>
@@ -177,7 +177,7 @@
     <parent link="Link_3" />
     <child link="Link_4" />
     <axis xyz="1 0 0" />
-    <limit lower="-0.52" upper="2.62" effort="0.118" velocity="4.2" />
+    <limit lower="-${pi}" upper="${pi}" effort="0.118" velocity="4.2" />
   </joint>
   <link name="Link_5">
     <inertial>
@@ -212,6 +212,6 @@
     <parent link="Link_4" />
     <child link="Link_5" />
     <axis xyz="0 -1 0" />
-    <limit lower="-0.52" upper="2.62" effort="0.118" velocity="4.2" />
+    <limit lower="-${pi}" upper="${pi}" effort="0.118" velocity="4.2" />
   </joint>
 </robot>
