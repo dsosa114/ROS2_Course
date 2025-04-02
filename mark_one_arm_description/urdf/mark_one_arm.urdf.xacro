@@ -3,6 +3,22 @@
      Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot name="mark_one_arm" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:arg name="sim_gazebo" default="false" />
+  <xacro:arg name="sim_ignition" default="false" />
+  <!-- initial position for simulations (Fake Hardware, Gazebo, Ignition) -->
+  <xacro:arg name="initial_positions_file" default="$(find mark_one_arm_description)/config/initial_positions.yaml"/>
+  
+  <xacro:include filename="$(find mark_one_arm_description)/urdf/mark_one_gazebo.xacro"/>
+  <xacro:include filename="$(find mark_one_arm_description)/urdf/mark_one_ros2_control.xacro"/>
+  
+
+   <!-- convert to property to use substitution in function -->
+  <xacro:property name="initial_positions_file" default="$(arg initial_positions_file)"/>
+  <xacro:property name="effort" value="1.5"/>
+  <xacro:property name="velocity" value="${2*pi}"/>
+  
+  
   <!-- create link fixed to the "world" -->
   <link name="world" />
   <link name="base_link">
@@ -67,12 +83,12 @@
       </geometry>
     </collision>
   </link>
-  <joint name="Joint_1" type="revolute">
+  <joint name="joint_1" type="revolute">
     <origin xyz="0.0005 0 0.0675" rpy="0 0 3.1416" />
     <parent link="base_link" />
     <child link="Link_1" />
     <axis xyz="0 0 -1" />
-    <limit lower="-${pi}" upper="${pi}" effort="1" velocity="3" />
+    <limit lower="-${pi}" upper="${pi}" effort="${effort}" velocity="${velocity}" />
   </joint>
   <link name="Link_2">
     <inertial>
@@ -102,12 +118,12 @@
       </geometry>
     </collision>
   </link>
-  <joint name="Joint_2" type="revolute">
+  <joint name="joint_2" type="revolute">
     <origin xyz="0.0005 -0.00615 0.0875" rpy="0 0 0" />
     <parent link="Link_1" />
     <child link="Link_2" />
     <axis xyz="0 1 0" />
-    <limit lower="-${pi/2}" upper="${pi/2}" effort="1" velocity="3" />
+    <limit lower="-${pi/2}" upper="${pi/2}" effort="${effort}" velocity="${velocity}" />
   </joint>
   <link name="Link_3">
     <inertial>
@@ -137,12 +153,12 @@
       </geometry>
     </collision>
   </link>
-  <joint name="Joint_3" type="revolute">
+  <joint name="joint_3" type="revolute">
     <origin xyz="0 0 0.20005" rpy="0 0 0" />
     <parent link="Link_2" />
     <child link="Link_3" />
     <axis xyz="0 1 0" />
-    <limit lower="-${pi/2}" upper="${pi/2}" effort="1" velocity="3" />
+    <limit lower="-${pi/2}" upper="${pi/2}" effort="${effort}" velocity="${velocity}" />
   </joint>
   <link name="Link_4">
     <inertial>
@@ -172,12 +188,12 @@
       </geometry>
     </collision>
   </link>
-  <joint name="Joint_4" type="revolute">
+  <joint name="joint_4" type="revolute">
     <origin xyz="-0.15685 -0.0252 0.0054" rpy="0 0 0" />
     <parent link="Link_3" />
     <child link="Link_4" />
     <axis xyz="1 0 0" />
-    <limit lower="-${pi}" upper="${pi}" effort="0.118" velocity="4.2" />
+    <limit lower="-${pi}" upper="${pi}" effort="${effort}" velocity="${velocity}" />
   </joint>
   <link name="Link_5">
     <inertial>
@@ -207,11 +223,11 @@
       </geometry>
     </collision>
   </link>
-  <joint name="Joint_5" type="revolute">
+  <joint name="joint_5" type="revolute">
     <origin xyz="-0.03875 0.02745 -0.00545" rpy="0 0 0" />
     <parent link="Link_4" />
     <child link="Link_5" />
     <axis xyz="0 -1 0" />
-    <limit lower="-${pi}" upper="${pi}" effort="0.118" velocity="4.2" />
+    <limit lower="-${pi}" upper="${pi}" effort="${effort}" velocity="${velocity}" />
   </joint>
 </robot>
