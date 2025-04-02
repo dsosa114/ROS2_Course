@@ -1,12 +1,15 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="mark_one_arm">
 
-   <xacro:if value="$(arg sim_gazebo)">
+  <gazebo reference="Link_1">
+        <material>Gazebo/Green</material>
+  </gazebo>
+  <xacro:if value="$(arg sim_gazebo)">
     <!-- Gazebo plugins -->
     <gazebo reference="world"/>
     <gazebo>
       <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
-        <parameters>$(arg simulation_controllers)</parameters>
+        <parameters>$(find mark_one_arm_description)/config/mark_one_controllers.yaml</parameters>
       </plugin>
     </gazebo>
   </xacro:if>
@@ -16,8 +19,8 @@
     <gazebo reference="world"/>
     <gazebo>
       <plugin filename="libign_ros2_control-system.so" name="ign_ros2_control::IgnitionROS2ControlPlugin">
-        <parameters>$(arg simulation_controllers)</parameters>
-        <controller_manager_node_name>$(arg tf_prefix)controller_manager</controller_manager_node_name>
+        <parameters>$(find mark_one_arm_description)/config/mark_one_controllers.yaml</parameters>
+        <!-- <controller_manager_node_name>$(arg tf_prefix)controller_manager</controller_manager_node_name> -->
       </plugin>
     </gazebo>
   </xacro:if>

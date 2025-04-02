@@ -13,7 +13,12 @@ def generate_launch_description():
     rviz_config_path = os.path.join(get_package_share_path('mark_one_arm_description'), 
                              'rviz', 'urdf_config.rviz')
     
-    robot_description = ParameterValue(Command(['xacro ', urdf_path]), value_type=str)
+    robot_description = ParameterValue(Command(['xacro ', 
+                                                urdf_path,
+                                                ' sim_gazebo:=',
+                                                'True'
+                                                ]), 
+                                               value_type=str)
 
     robot_state_publisher_node = Node(
         package="robot_state_publisher",
