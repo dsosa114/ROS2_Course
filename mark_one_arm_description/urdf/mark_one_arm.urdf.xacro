@@ -15,6 +15,7 @@
   <xacro:property name="effort" value="1.5"/>
   <xacro:property name="velocity" value="${2*pi}"/>
   
+  <xacro:include filename="$(find mark_one_arm_description)/urdf/common_properties.xacro"/>
   <xacro:include filename="$(find mark_one_arm_description)/urdf/mark_one_gazebo.xacro"/>
   <xacro:include filename="$(find mark_one_arm_description)/urdf/mark_one_ros2_control.xacro"/>
   
@@ -22,7 +23,8 @@
   <!-- create link fixed to the "world" -->
   <link name="world" />
   <link name="base_link">
-    <inertial>
+    <xacro:box_inertia m="1.7609" l="0.2074" w="0.2074" h="0.07" xyz="0 0 0.03" rpy="${pi/2} 0 0"/>
+    <!-- <inertial>
       <origin xyz="-0.038112 1.1649E-05 -0.051288" rpy="0 0 0" />
       <mass value="1.7609" />
       <inertia
@@ -32,7 +34,7 @@
         iyy="0.017262"
         iyz="-1.5817E-06"
         izz="0.0096448" />
-    </inertial>
+    </inertial> -->
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
