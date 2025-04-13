@@ -108,13 +108,13 @@
                 </ray>
                 <xacro:if value="$(arg ign)">
                     <!-- Gazebo plugin to publish the laser scan data -->
-                    <plugin filename="libignition-gazebo-sensors-system.so" name="ignition::gazebo::systems::Sensors">
+                    <plugin filename="libignition-gazebo-sensors-system" name="ignition::gazebo::systems::Sensors">
                         <render_engine>ogre2</render_engine>
                     </plugin>
                 </xacro:if>
                 <xacro:unless value="$(arg ign)">
                     <!-- Gazebo plugin to publish the laser scan data -->
-                    <plugin filename="gz-sim-sensors-system.so" name="gz::sim::systems::Sensors">
+                    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
                         <render_engine>ogre2</render_engine>
                     </plugin>
                 </xacro:unless>

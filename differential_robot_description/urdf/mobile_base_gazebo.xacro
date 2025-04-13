@@ -72,13 +72,13 @@
                     
                 </plugin>
 
-                <plugin name="ignition::gazebo::systems::JointStatePublisher" filename="libignition-gazebo-joint-state-publisher-system.so">
+                <plugin name="ignition::gazebo::systems::JointStatePublisher" filename="libignition-gazebo-joint-state-publisher-system">
                     <joint_name>base_left_wheel_joint</joint_name>
                     <joint_name>base_right_wheel_joint</joint_name>
                 </plugin>
             </xacro:if>
             <xacro:unless value="$(arg ign)">
-                <plugin name="gz::sim::systems::DiffDrive" filename="gz-sim-diff-drive-system.so">
+                <plugin name="gz::sim::systems::DiffDrive" filename="gz-sim-diff-drive-system">
                     
                     <left_joint>base_left_wheel_joint</left_joint>
                     <right_joint>base_right_wheel_joint</right_joint>
