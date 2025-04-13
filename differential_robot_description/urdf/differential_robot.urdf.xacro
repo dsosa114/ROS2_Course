@@ -2,6 +2,9 @@
 
 <robot name="differential_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
+    <xacro:arg name="sim_classic" default="false" />
+    <xacro:arg name="ign" default="false" />
+
     <xacro:include filename="$(find differential_robot_description)/urdf/common_properties.xacro"/>
     <xacro:include filename="$(find differential_robot_description)/urdf/mobile_base.xacro"/>
     <xacro:include filename="$(find differential_robot_description)/urdf/mobile_base_gazebo.xacro"/>

@@ -9,7 +9,7 @@ from ament_index_python.packages import get_package_share_path, get_package_shar
 
 def generate_launch_description():
 
-    gazebo_launch_path = os.path.join(get_package_share_directory('gazebo_ros'), 'launch')
+    gazebo_launch_path = os.path.join(get_package_share_directory('ros_gz_sim'), 'launch')
 
     gazebo_world_path = os.path.join(get_package_share_path('differential_robot_bringup'), 
                                      'worlds', 'sample_home.world')
@@ -28,6 +28,9 @@ def generate_launch_description():
          urdf_path,
          " ",
          "sim_classic:=",
+         "false",
+         " ",
+         "ign:=",
          "true"
         ]), value_type=str)
 
@@ -53,20 +56,33 @@ def generate_launch_description():
     display_robot_gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             gazebo_launch_path,
-            '/gazebo.launch.py'
-        ]), launch_arguments={'world':gazebo_world_path}.items()
+            '/gz_sim.launch.py'
+        ]), launch_arguments={'gz_args':'empty.sdf'}.items()
     )
 
     spawn_entity_node = Node(
-        package="gazebo_ros",
-        executable="spawn_entity.py",
+        package="ros_gz_sim",
+        executable="create",
         arguments=['-topic', '/robot_description',
                    '-entity', 'differential_robot']
+    )
+
+    ign_bridge_node = Node(
+        package="ros_gz_bridge",
+        executable="parameter_bridge",
+        # parameters=[{'use_sim_time': True}],
+        arguments=[
+            '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
+            # '/robot_description@std_msgs/msg/String',
+            # '/differential_robot/odometry@nav_msgs/msg/Odometry',
+            '/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan'
+        ]
     )
 
     return LaunchDescription([
         robot_state_publisher_node,
         # rviz2_node,
         display_robot_gazebo,
-        spawn_entity_node
+        spawn_entity_node,
+        ign_bridge_node
     ])
