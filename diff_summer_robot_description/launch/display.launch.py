@@ -25,7 +25,8 @@ def generate_launch_description():
 
     rviz2_node = Node(
         package="rviz2",
-        executable="rviz2"
+        executable="rviz2",
+        arguments=[]
     )
 
     return LaunchDescription([
