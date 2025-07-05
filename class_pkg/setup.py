@@ -31,7 +31,9 @@ setup(
             'patrol_tutorial = class_pkg.turtlebot4_nav_tutorial:main',
             'point_listener = class_pkg.turtlebot4_point_selector:main',
             'navegacion = class_pkg.NavigationDaniel:main',
-            'navegacion2 = class_pkg.Patrol:main'
+            'navegacion2 = class_pkg.Patrol:main',
+            'cam_publisher = class_pkg.camera_publisher:main',
+            'img_processor = class_pkg.image_processor:main'
         ],
     },
 )
