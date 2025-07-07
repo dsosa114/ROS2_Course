@@ -75,7 +75,9 @@ def generate_launch_description():
             '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
             # '/robot_description@std_msgs/msg/String',
             # '/differential_robot/odometry@nav_msgs/msg/Odometry',
-            '/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan'
+            '/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan',
+            '/cmd_vel@geometry_msgs/msg/Twist[gz.msgs.Twist'
+            '/cmd_vel@gz.msgs.Twist[geometry_msgs/msg/Twist'
         ]
     )
 
