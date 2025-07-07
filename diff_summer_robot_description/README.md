@@ -1,13 +1,13 @@
 # Differential robot created for summer 25
 ## Chasis dimensions
-    lenght = 0.6
-    width = 0.2
+    length = 0.6
+    width = 0.4
     height = 0.2
 
 ## Wheels dimensions
 ### Main wheels
     radius = 0.1
-    lenght = 0.05
+    length = 0.05
 ### Caster wheel
     radius = 0.05
 
