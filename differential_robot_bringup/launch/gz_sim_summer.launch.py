@@ -13,11 +13,12 @@ def generate_launch_description():
 
     gazebo_world_path = os.path.join(get_package_share_path('differential_robot_bringup'), 
                                      'worlds', 'test_world.sdf')
+    # gazebo_world_path = "empty.sdf"
 
     # display_launch_path = os.path.join(get_package_share_directory('differential_robot_description'), 'launch')
 
     urdf_path = os.path.join(get_package_share_path('diff_summer_robot_description'), 
-                             'urdf', 'diff_summer_robot_tutor.urdf.xacro')
+                             'urdf/tutor', 'diff_summer_robot_tutor.urdf.xacro')
     
     rviz_config_path = os.path.join(get_package_share_path('diff_summer_robot_description'), 
                              'rviz', 'config.rviz')

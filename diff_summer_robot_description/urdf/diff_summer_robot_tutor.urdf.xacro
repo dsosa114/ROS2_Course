@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<robot name="diff_summer_robot_tutor" xmlns:xacro="http://www.ros.org/wiki/xacro">
-
-    <xacro:include filename="$(find diff_summer_robot_description)/urdf/common_properties_tutor.xacro"/>
-    <xacro:include filename="$(find diff_summer_robot_description)/urdf/mobile_base_tutor.xacro"/> 
-    <xacro:include filename="$(find diff_summer_robot_description)/urdf/mobile_base_gazebo_tutor.xacro"/> 
-
-</robot>

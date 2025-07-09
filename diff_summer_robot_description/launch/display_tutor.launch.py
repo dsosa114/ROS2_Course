@@ -8,7 +8,7 @@ from ament_index_python.packages import get_package_share_path
 def generate_launch_description():
 
     urdf_path = os.path.join(get_package_share_path('diff_summer_robot_description'),
-                             'urdf', 'diff_summer_robot_tutor.urdf.xacro')
+                             'urdf/tutor', 'diff_summer_robot_tutor.urdf.xacro')
     
     rviz_config_path = os.path.join(get_package_share_path('diff_summer_robot_description'),
                                     'rviz', 'config.rviz')
