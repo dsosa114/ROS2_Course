@@ -22,6 +22,9 @@ def generate_launch_description():
     rviz_config_path = os.path.join(get_package_share_path('diff_summer_robot_description'), 
                              'rviz', 'config.rviz')
     
+    gazebo_config_path = os.path.join(get_package_share_path('differential_robot_bringup'), 
+                                     'config', 'gz_bridge.yaml')
+    
     # robot_description = ParameterValue(Command(
     #     ["xacro",
     #      " ", 
@@ -69,28 +72,24 @@ def generate_launch_description():
     spawn_entity_node = Node(
         package="ros_gz_sim",
         executable="create",
-        arguments=['-topic', '/robot_description',
-                   '-entity', 'my_tutor_robot']
+        arguments=['-topic', '/robot_description']
     )
 
-    ign_bridge_node = Node(
+    bridge_node = Node(
         package="ros_gz_bridge",
         executable="parameter_bridge",
-        # parameters=[{'use_sim_time': True}],
-        arguments=[
-            '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
-            # '/robot_description@std_msgs/msg/String',
-            # '/differential_robot/odometry@nav_msgs/msg/Odometry',
-            '/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan',
-            '/cmd_vel@geometry_msgs/msg/Twist[gz.msgs.Twist'
-            '/cmd_vel@gz.msgs.Twist[geometry_msgs/msg/Twist'
-        ]
+        parameters=[{'config_file': gazebo_config_path}]
+        # arguments=[
+        #     '--ros-args',
+        #     '-p',
+        #     f'config_file:={gazebo_config_path}'
+        # ]
     )
 
     return LaunchDescription([
         robot_state_publisher_node,
         rviz2_node,
         display_robot_gazebo,
-        spawn_entity_node
-        # ign_bridge_node
+        spawn_entity_node,
+        bridge_node
     ])
