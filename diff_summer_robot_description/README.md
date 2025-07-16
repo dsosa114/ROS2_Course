@@ -20,3 +20,4 @@
    https://github.com/gazebosim/gz-sim/tree/gz-sim9/src/systems
    https://github.com/gazebosim/ros_gz/tree/ros2/ros_gz_bridge
    https://gazebosim.org/docs/latest/install_ubuntu/
+   https://github.com/gazebosim/gz-sensors

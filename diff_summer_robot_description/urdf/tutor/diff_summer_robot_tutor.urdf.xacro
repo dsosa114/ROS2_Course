@@ -5,5 +5,7 @@
     <xacro:include filename="$(find diff_summer_robot_description)/urdf/tutor/common_properties_tutor.xacro"/>
     <xacro:include filename="$(find diff_summer_robot_description)/urdf/tutor/mobile_base_tutor.xacro"/> 
     <xacro:include filename="$(find diff_summer_robot_description)/urdf/tutor/mobile_base_gazebo_tutor.xacro"/> 
+    <xacro:include filename="$(find diff_summer_robot_description)/urdf/tutor/camera_tutor.xacro"/> 
+    <xacro:include filename="$(find diff_summer_robot_description)/urdf/tutor/lidar_tutor.xacro"/> 
 
 </robot>
