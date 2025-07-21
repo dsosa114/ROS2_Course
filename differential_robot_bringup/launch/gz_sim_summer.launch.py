@@ -24,7 +24,7 @@ def generate_launch_description():
                              'rviz', 'config.rviz')
     
     gazebo_config_path = os.path.join(get_package_share_path('differential_robot_bringup'), 
-                                     'config', 'gz_bridge.yaml')
+                                     'config', 'gz_summer_bridge.yaml')
     
     # robot_description = ParameterValue(Command(
     #     ["xacro",
