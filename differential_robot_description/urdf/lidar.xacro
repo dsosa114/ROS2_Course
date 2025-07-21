@@ -74,12 +74,13 @@
         </xacro:if>
 
         <xacro:unless value="$(arg sim_classic)">
-            <sensor type="gpu_lidar" name="lidar_sensor">
+            <sensor type="gpu_lidar" name="lidar_link">
                 <always_on>true</always_on>
                 <pose>0 0 0 0 0 0</pose>
                 <visualize>true</visualize>
                 <update_rate>40</update_rate>
-                <topic>lidar</topic>
+                <topic>scan</topic>
+                <gz_frame_id>lidar_link</gz_frame_id>
                 <ray>
                     <scan>
                         <horizontal>

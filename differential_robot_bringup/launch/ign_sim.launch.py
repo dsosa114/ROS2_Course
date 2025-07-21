@@ -19,8 +19,11 @@ def generate_launch_description():
     urdf_path = os.path.join(get_package_share_path('differential_robot_description'), 
                              'urdf', 'differential_robot.urdf.xacro')
     
-    # rviz_config_path = os.path.join(get_package_share_path('differential_robot_bringup'), 
-    #                          'rviz', 'odom_config.rviz')
+    rviz_config_path = os.path.join(get_package_share_path('differential_robot_bringup'), 
+                             'rviz', 'odom_config.rviz')
+
+    gazebo_config_path = os.path.join(get_package_share_path('differential_robot_bringup'), 
+                                     'config', 'ign_bridge.yaml')
     
     robot_description = ParameterValue(Command(
         ["xacro",
@@ -47,17 +50,17 @@ def generate_launch_description():
     #     ])
     # )
 
-    # rviz2_node = Node(
-    #     package="rviz2",
-    #     executable="rviz2",
-    #     arguments=['-d', rviz_config_path]
-    # )
+    rviz2_node = Node(
+        package="rviz2",
+        executable="rviz2",
+        arguments=['-d', rviz_config_path]
+    )
 
     display_robot_gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             gazebo_launch_path,
             '/gz_sim.launch.py'
-        ]), launch_arguments={'gz_args':'empty.sdf'}.items()
+        ]), launch_arguments={'gz_args':'empty.sdf -r'}.items()
     )
 
     spawn_entity_node = Node(
@@ -70,18 +73,17 @@ def generate_launch_description():
     ign_bridge_node = Node(
         package="ros_gz_bridge",
         executable="parameter_bridge",
-        # parameters=[{'use_sim_time': True}],
-        arguments=[
-            '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
-            # '/robot_description@std_msgs/msg/String',
-            # '/differential_robot/odometry@nav_msgs/msg/Odometry',
-            '/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan'
-        ]
+        parameters=[{'config_file': gazebo_config_path}]
+        # arguments=[
+        #     '--ros-args',
+        #     '-p',
+        #     f'config_file:={gazebo_config_path}'
+        # ]
     )
 
     return LaunchDescription([
         robot_state_publisher_node,
-        # rviz2_node,
+        rviz2_node,
         display_robot_gazebo,
         spawn_entity_node,
         ign_bridge_node

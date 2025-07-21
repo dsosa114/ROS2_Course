@@ -45,50 +45,77 @@
     
     <gazebo reference="camera_link">
         <material>Gazebo/Blue</material>
-        <sensor name="camera_sensor" type="camera" update_rate="10.0">
+        <xacro:if value="$(arg sim_classic)">
+            <sensor name="camera_sensor" type="camera" update_rate="10.0">
+                <visualize>true</visualize>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <!-- Sensor |camera,ray,imu,magnetometer,gps,force_torque,contact,sonar,rfidtag,rfid| -->
+                <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+                    <!-- Change namespace, camera name and topics so:
+                        * Images are published to: /custom_ns/custom_camera/custom_image
+                        * Camera info is published to: /custom_ns/custom_camera/custom_info
+                        * Trigger is received on: /custom_ns/custom_camera/custom_trigger
+                    -->
+                    <!-- <ros>
+                    <namespace>custom_ns</namespace>
+                    <remapping>image_raw:=custom_img</remapping>
+                    <remapping>camera_info:=custom_info</remapping>
+                    <remapping>image_trigger:=custom_trigger</remapping>
+                    </ros> -->
+            
+                    <!-- Set camera name. If empty, defaults to sensor name -->
+                    <!-- <camera_name>custom_camera</camera_name> -->
+            
+                    <!-- Set TF frame name. If empty, defaults to link name -->
+                    <frame_name>camera_optical_link</frame_name>
+            
+                    <!-- Set to true to turn on triggering -->
+                    <!-- <triggered>true</triggered> -->
+            
+                    <!-- Set some projection matrix fields-->
+                    <!-- Projection matrix principal point cx-->
+                    <!-- <P_cx>0</P_cx> -->
+                    <!-- Projection matrix principal point cy-->
+                    <!-- <P_cy>320.5</P_cy> -->
+                    <!-- Projection matrix focal length fy-->
+                    <!-- <P_fy>0</P_fy> -->
+                    <!-- Projection matrix translation Tx, Ty between stereo cameras-->
+                    <!-- <Tx>240.5</Tx> -->
+                    <!-- <Ty>0</Ty> -->
+                    <!-- Full 3x3 rectification matrix. Values are in row-major order -->
+                    <!-- <rectification_matrix>0.999 0.0 -0.049 0.0 1.0 0.0 0.049 0.0 0.999</rectification_matrix> -->
+            
+                    <!-- <hack_baseline>0.07</hack_baseline> -->
+                </plugin>
+            </sensor>
+        </xacro:if>
+        <xacro:unless value="$(arg sim_classic)">
+            <sensor name="camera" type="camera">
+            <camera>
+                <horizontal_fov>1.3962634</horizontal_fov>
+                <image>
+                    <width>640</width>
+                    <height>480</height>
+                    <format>R8G8B8</format>
+                </image>
+                <clip>
+                    <near>0.1</near>
+                    <far>15</far>
+                </clip>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0.0</mean>
+                    <stddev>0.001</stddev>
+                </noise>
+                <optical_frame_id>camera_optical_link</optical_frame_id>
+                <camera_info_topic>camera/camera_info</camera_info_topic>
+            </camera>
+            <always_on>1</always_on>
+            <update_rate>30</update_rate>
             <visualize>true</visualize>
-            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
-        <!-- Sensor |camera,ray,imu,magnetometer,gps,force_torque,contact,sonar,rfidtag,rfid| -->
-            <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
-                <!-- Change namespace, camera name and topics so:
-                    * Images are published to: /custom_ns/custom_camera/custom_image
-                    * Camera info is published to: /custom_ns/custom_camera/custom_info
-                    * Trigger is received on: /custom_ns/custom_camera/custom_trigger
-                -->
-                <!-- <ros>
-                <namespace>custom_ns</namespace>
-                <remapping>image_raw:=custom_img</remapping>
-                <remapping>camera_info:=custom_info</remapping>
-                <remapping>image_trigger:=custom_trigger</remapping>
-                </ros> -->
-        
-                <!-- Set camera name. If empty, defaults to sensor name -->
-                <!-- <camera_name>custom_camera</camera_name> -->
-        
-                <!-- Set TF frame name. If empty, defaults to link name -->
-                <frame_name>camera_optical_link</frame_name>
-        
-                <!-- Set to true to turn on triggering -->
-                <!-- <triggered>true</triggered> -->
-        
-                <!-- Set some projection matrix fields-->
-                <!-- Projection matrix principal point cx-->
-                <!-- <P_cx>0</P_cx> -->
-                <!-- Projection matrix principal point cy-->
-                <!-- <P_cy>320.5</P_cy> -->
-                <!-- Projection matrix focal length fy-->
-                <!-- <P_fy>0</P_fy> -->
-                <!-- Projection matrix translation Tx, Ty between stereo cameras-->
-                <!-- <Tx>240.5</Tx> -->
-                <!-- <Ty>0</Ty> -->
-                <!-- Full 3x3 rectification matrix. Values are in row-major order -->
-                <!-- <rectification_matrix>0.999 0.0 -0.049 0.0 1.0 0.0 0.049 0.0 0.999</rectification_matrix> -->
-        
-                <!-- <hack_baseline>0.07</hack_baseline> -->
-            </plugin>
-        </sensor>
-        
-        
+            <topic>camera/image_raw</topic>
+            </sensor>
+        </xacro:unless>
     </gazebo>
     
 </robot>

@@ -35,6 +35,7 @@
             <visualize>true</visualize>
             <update_rate>15</update_rate>
             <topic>scan</topic>
+            <gz_frame_id>lidar_link</gz_frame_id>
             <lidar>
                 <scan>
                     <horizontal>

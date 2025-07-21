@@ -22,7 +22,14 @@ def generate_launch_description():
     rviz_config_path = os.path.join(get_package_share_path('differential_robot_bringup'), 
                              'rviz', 'odom_config.rviz')
     
-    robot_description = ParameterValue(Command(['xacro ', urdf_path]), value_type=str)
+    robot_description = ParameterValue(Command(
+        ['xacro',
+         ' ', 
+         urdf_path,
+         ' ',
+         'sim_classic:=',
+         'true'
+         ]), value_type=str)
 
     robot_state_publisher_node = Node(
         package="robot_state_publisher",
