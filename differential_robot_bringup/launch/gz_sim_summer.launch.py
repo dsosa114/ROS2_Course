@@ -60,7 +60,8 @@ def generate_launch_description():
     rviz2_node = Node(
         package="rviz2",
         executable="rviz2",
-        arguments=['-d', rviz_config_path]
+        arguments=['-d', rviz_config_path],
+        parameters=[{'use_sim_time':True}]
     )
 
     display_robot_gazebo = IncludeLaunchDescription(

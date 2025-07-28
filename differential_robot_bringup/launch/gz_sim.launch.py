@@ -12,7 +12,7 @@ def generate_launch_description():
     gazebo_launch_path = os.path.join(get_package_share_directory('ros_gz_sim'), 'launch')
 
     gazebo_world_path = os.path.join(get_package_share_path('differential_robot_bringup'),
-                                     'worlds', 'test_world.sdf')
+                                     'worlds', 'my_first_world.sdf')
 
     # display_launch_path = os.path.join(get_package_share_directory('differential_robot_description'), 'launch')
 
