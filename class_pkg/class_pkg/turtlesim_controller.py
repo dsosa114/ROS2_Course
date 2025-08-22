@@ -21,7 +21,7 @@ class TurtlesimController(Node):
 
         self.publisher_ = self.create_publisher(Twist, "turtle1/cmd_vel", 10)
         self.pose_subscriber_ = self.create_subscription(Pose, "turtle1/pose", self.pose_subscription_callback, 10)
-        # self.timer_ = self.create_timer(0.05, self.timer_callback)
+        self.timer_ = self.create_timer(0.05, self.timer_callback)
         
         self.x = 1.
         self.y = 1.
