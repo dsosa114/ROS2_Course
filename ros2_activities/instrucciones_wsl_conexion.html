@@ -1,0 +1,108 @@
+<h2 id="instructions-for-communicating-wsl2-ros-2-with-other-devices">Instructions for communicating WSL2 ROS 2 with other devices</h2>
+<p>By default, WSL2 uses NAT, meaning it will have its own IP address different from Windows. This prevents your devices and WSL2 from being on the same subnet and communicating via multicast by default. The NAT will block some traffic, and discovery won’t work. The DDS protocol, used by ROS2 to send packets, requires multicast, or you need to update it to unicast (specifying the IP of the node directly).</p>
+<hr />
+<h2 id="using-multicast">Using Multicast</h2>
+<p>The “Mirrored Networking” mode, explained <a href="https://learn.microsoft.com/en-us/windows/wsl/networking#mirrored-mode-networking">here</a>, enables multicast support. This mode essentially allows WSL and Windows to share the same IP address.</p>
+<p>To enable it:</p>
+<ol type="1">
+<li><p><strong>Create or update</strong> a <code>.wslconfig</code> file in Windows at <code>%UserProfile%\.wslconfig</code> with the following content:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="kw">[wsl2]</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="dt">networkingMode</span><span class="ot">=</span><span class="st">mirrored</span></span></code></pre></div></li>
+<li><p>To <strong>enable inbound packets</strong>, run the following in PowerShell:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a>Set-NetFirewallHyperVVMSetting -Name &#39;{%VM_GUID%}&#39; -DefaultInboundAction Allow</span></code></pre></div>
+<p>This command modifies a specific setting on a Hyper-V virtual machine (VM) firewall to allow all inbound network traffic to the VM by default.</p>
+<ul>
+<li><code>Set-NetFirewallHyperVVMSetting</code>: This cmdlet modifies Hyper-V VM firewall settings.</li>
+<li><code>-Name '{%VM_GUID%}'</code>: This parameter specifies the VM to configure using its unique identifier (GUID or VM ID).</li>
+<li><code>-DefaultInboundAction Allow</code>: This parameter sets the default action for incoming network traffic to <code>Allow</code>, overriding the more secure default of blocking. This is often used in testing or troubleshooting to rule out firewall issues.</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="finding-your-wsl2-vm-guid">Finding Your WSL2 VM GUID</h2>
+<p>You can find the GUID of a WSL2 Linux instance by checking the Windows Terminal settings or by querying an environment variable from within the WSL instance itself.</p>
+<h3 id="method-1-check-windows-terminal-settings">Method 1: Check Windows Terminal Settings</h3>
+<ol type="1">
+<li><p>Open <strong>Windows Terminal</strong>.</p></li>
+<li><p>Go to the <strong>Settings</strong> menu (click the dropdown arrow in the terminal title bar and select “Settings” or press <code>Ctrl + ,</code>).</p></li>
+<li><p>The <code>settings.json</code> file will open. Look for the <code>"profiles"</code> section.</p></li>
+<li><p>Within the <code>profiles</code> section, find the <code>"list"</code> containing entries for your installed shells, including your WSL distributions.</p></li>
+<li><p>Each WSL distribution will have an entry similar to this:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="fu">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a>    <span class="dt">&quot;guid&quot;</span><span class="fu">:</span> <span class="st">&quot;{&lt;your-GUID-here&gt;}&quot;</span><span class="fu">,</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a>    <span class="dt">&quot;hidden&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a>    <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Ubuntu&quot;</span><span class="fu">,</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a>    <span class="dt">&quot;source&quot;</span><span class="fu">:</span> <span class="st">&quot;Microsoft.WSL&quot;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div></li>
+<li><p>The value next to <code>"guid"</code> is the unique identifier for that specific WSL instance.</p></li>
+</ol>
+<hr />
+<h3 id="method-2-use-the-wt_profile_id-environment-variable">Method 2: Use the <code>WT_PROFILE_ID</code> Environment Variable</h3>
+<ol type="1">
+<li><p>Open your WSL instance in a terminal.</p></li>
+<li><p>Run the following command:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="bu">echo</span> <span class="va">$WT_PROFILE_ID</span></span></code></pre></div></li>
+<li><p>This command will print the GUID of the profile you are currently using. This method is especially useful for finding the GUID of the specific instance you are running.</p></li>
+</ol>
+<p>You can also watch a video walkthrough on how to find the profile ID (GUID) for your WSL2 instance <a href="https://www.youtube.com/watch?v=vCpRU9yJw9o">here</a>.</p>
+<hr />
+<p>After applying these changes, make sure to <strong>restart WSL completely or reboot your system</strong> for the settings to take effect. You should then see the same <code>inet</code> address when running <code>ifconfig</code> in WSL and <code>ipconfig</code> in Windows.</p>
+<hr />
+<p>To revert the command <code>Set-NetFirewallHyperVVMSetting -Name '{%VM_GUID%}' -DefaultInboundAction Allow</code>, you would use the same cmdlet but change the <code>-DefaultInboundAction</code> parameter to its original value, which is <strong>Block</strong>.</p>
+<hr />
+<h3 id="reverting-the-command">Reverting the Command</h3>
+<p>The original command <strong>allowed</strong> all inbound traffic. To revert this, you need to change the action back to <strong>blocking</strong> inbound traffic by default. The command to do this is:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a>Set-NetFirewallHyperVVMSetting -Name &#39;{%VM_GUID%}&#39; -DefaultInboundAction Block</span></code></pre></div>
+<ul>
+<li><code>Set-NetFirewallHyperVVMSetting</code>: This is the same cmdlet used to modify the firewall settings.</li>
+<li><code>-Name '{%VM_GUID%}'</code>: This parameter still targets the specific VM by its GUID.</li>
+<li><code>-DefaultInboundAction Block</code>: This parameter is changed to <strong>Block</strong>, which reverts the default behavior of the firewall to its more secure state, preventing all inbound traffic by default unless a specific rule allows it.</li>
+</ul>
+<hr />
+<p># Instrucciones para la comunicación de WSL2 ROS 2 con otros dispositivos</p>
+<p>Por defecto, WSL2 utiliza NAT, lo que significa que tendrá su propia dirección IP diferente a la de Windows. Esto implica que sus otros dispositivos y WSL2 no estarán en la misma subred y no podrán comunicarse a través de multidifusión por defecto. El NAT bloqueará parte del tráfico y el descubrimiento no funcionará. El protocolo DDS para enviar paquetes en ROS2 necesita multidifusión o debe actualizarlo a unidifusión (especificando directamente la IP del nodo).</p>
+<hr />
+<h2 id="uso-de-la-multidifusión">Uso de la multidifusión</h2>
+<p>El modo de “red en espejo” explicado aquí (<a href="https://www.google.com/search?q=https://learn.microsoft.com/es-es/windows/wsl/networking%23mirrored-mode-networking">https://learn.microsoft.com/es-es/windows/wsl/networking#mirrored-mode-networking</a>) habilitaría este soporte. Básicamente, WSL y Windows tendrían la misma dirección IP.</p>
+<p>Esto implica crear/actualizar un archivo <code>.wslconfig</code> en Windows: <code>%UserProfile%\.wslconfig</code> con el siguiente contenido:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode ini"><code class="sourceCode ini"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="kw">[wsl2]</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a><span class="dt">networkingMode</span><span class="ot">=</span><span class="st">mirrored</span></span></code></pre></div>
+<p>Para habilitar los paquetes entrantes, ejecute lo siguiente en PowerShell:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a>Set-NetFirewallHyperVVMSetting -Name &#39;{%VM_GUID%}&#39; -DefaultInboundAction Allow</span></code></pre></div>
+<p>Este comando modifica una configuración específica en un firewall de máquina virtual (VM) de Hyper-V. Permite todo el tráfico de red entrante a la VM por defecto.</p>
+<ul>
+<li><code>Set-NetFirewallHyperVVMSetting</code>: Este es el cmdlet (comando) principal que modifica la configuración del firewall de la VM de Hyper-V.</li>
+<li><code>-Name '{%VM_GUID%}'</code>: Este parámetro especifica la VM en particular que desea configurar. La cadena larga de números y letras entre llaves es el identificador único de la VM, también conocido como su GUID (Identificador Único Global) o ID de VM. Cada máquina virtual tiene su propio GUID distinto.</li>
+<li><code>-DefaultInboundAction Allow</code>: Este parámetro establece la acción predeterminada para cualquier tráfico de red entrante que no coincida con una regla de firewall específica y más granular. Al establecerlo en <code>Allow</code>, está abriendo la puerta a todas las conexiones entrantes a esa VM específica, anulando el valor predeterminado más seguro de bloquear dicho tráfico.</li>
+</ul>
+<p>En términos simples, este comando es una excepción a la regla. En lugar de la medida de seguridad típica de bloquear el tráfico entrante por defecto y solo permitir conexiones específicas, este comando le dice al firewall que permita todo lo que entre para la VM identificada por ese código único. Esto se utiliza a menudo en entornos de prueba o de laboratorio específicos donde la seguridad es menos preocupante que la conectividad, o cuando se está solucionando un problema de conexión y se quiere descartar el firewall como la causa.</p>
+<hr />
+<h2 id="cómo-encontrar-el-guid-de-su-instancia-wsl2">Cómo encontrar el GUID de su instancia WSL2</h2>
+<p>Puede encontrar el GUID de una instancia de Linux de WSL2 comprobando la configuración de la Terminal de Windows o consultando una variable de entorno desde la propia instancia de WSL.</p>
+<h3 id="método-1-comprobar-la-configuración-de-la-terminal-de-windows">Método 1: Comprobar la configuración de la Terminal de Windows</h3>
+<ol type="1">
+<li><p>Abra la Terminal de Windows.</p></li>
+<li><p>Vaya al menú de <strong>Configuración</strong>. Puede hacerlo haciendo clic en la flecha desplegable en la barra de título de la terminal y seleccionando “Configuración” o presionando <code>Ctrl + ,</code>.</p></li>
+<li><p>Se abrirá el archivo <code>settings.json</code>. Dentro de este archivo, busque la sección <code>"profiles"</code>.</p></li>
+<li><p>Dentro de la sección <code>profiles</code>, encontrará una <code>"list"</code> que contiene entradas para cada uno de sus shells instalados, incluidas sus distribuciones de WSL.</p></li>
+<li><p>Cada distribución de WSL tendrá una entrada similar a esta:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="fu">{</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true"></a>    <span class="dt">&quot;guid&quot;</span><span class="fu">:</span> <span class="st">&quot;{&lt;su-GUID-aquí&gt;}&quot;</span><span class="fu">,</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true"></a>    <span class="dt">&quot;hidden&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true"></a>    <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Ubuntu&quot;</span><span class="fu">,</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true"></a>    <span class="dt">&quot;source&quot;</span><span class="fu">:</span> <span class="st">&quot;Microsoft.WSL&quot;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true"></a><span class="fu">}</span></span></code></pre></div></li>
+<li><p>El valor junto a <code>"guid"</code> es el identificador único para esa instancia específica de WSL.</p></li>
+</ol>
+<hr />
+<h3 id="método-2-usar-la-variable-de-entorno-wt_profile_id">Método 2: Usar la variable de entorno <code>WT_PROFILE_ID</code></h3>
+<ol type="1">
+<li><p>Abra su instancia de WSL en una terminal.</p></li>
+<li><p>Ejecute el siguiente comando:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="bu">echo</span> <span class="va">$WT_PROFILE_ID</span></span></code></pre></div></li>
+<li><p>Este comando imprimirá el GUID del perfil que está utilizando actualmente. Este método es especialmente útil si está intentando encontrar el GUID de la instancia específica que está ejecutando.</p></li>
+</ol>
+<p><a href="https://www.youtube.com/watch?v=vCpRU9yJw9o">Cómo encontrar el ID de perfil de WSL 2 (GUID)</a></p>
+<p>Este video proporciona un tutorial sobre cómo encontrar el ID de perfil (GUID) para su instancia WSL2.</p>
+<hr />
+<p>Asegúrese de reiniciar WSL por completo o reiniciar el sistema, y debería tener todo habilitado.</p>
+<p><code>ifconfig</code> e <code>ipconfig</code> deberían mostrar la misma dirección <code>inet</code>.</p>

@@ -1,0 +1,150 @@
+<h2 id="add-devices-to-wsl-instructions">Add Devices to WSL Instructions</h2>
+<h3 id="terminal-commands">Terminal Commands</h3>
+<p>The following commands should be executed in a <strong>PowerShell terminal as an administrator</strong>.</p>
+<ol type="1">
+<li><p><strong>Install <code>usbipd</code></strong>: <code>winget install usbipd</code></p></li>
+<li><p><strong>Identify the USB device</strong>: <code>usbipd list</code></p></li>
+<li><p><strong>Share the device with WSL</strong>: Replace <code>X-X</code> with the desired device’s <code>busid</code> number. <code>usbipd bind --busid=X-X</code></p></li>
+<li><p><strong>Attach the device to WSL</strong>: <code>usbipd attach --wsl --busid=X-X</code></p></li>
+</ol>
+<table>
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Optional Commands</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">If you receive the error <code>"usbipd: error: Loading vhci_hcd failed."</code> when attaching a camera, run <code>sudo modprobe vhci_hcd</code> inside your WSL environment.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">If you get a <code>VIDEOIO(V4L2:/dev/video0): select() timeout.</code> error, it may be due to missing codecs in the WSL environment. To fix this, add the following line to your OpenCV code before the capture loop: <code>camera.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))</code>.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="python-code-for-testing-camera-in-wsl">Python Code for Testing Camera in WSL</h3>
+<p>Below is a script to test if the camera is working correctly within the WSL environment.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="im">import</span> cv2</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="kw">def</span> read_usb_camera():</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a><span class="co">    Reads frames from the first available USB camera and displays them.</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a><span class="co">    Press &#39;q&#39; to quit the application.</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a>    <span class="co"># Open the default camera (usually the first available USB camera)</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a>    <span class="co"># The argument &#39;0&#39; refers to the default camera. If you have multiple cameras,</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true"></a>    <span class="co"># you might need to try &#39;1&#39;, &#39;2&#39;, etc.</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true"></a>    cap <span class="op">=</span> cv2.VideoCapture(<span class="dv">0</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true"></a>    <span class="co"># Check if the camera opened successfully</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true"></a>    <span class="cf">if</span> <span class="kw">not</span> cap.isOpened():</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true"></a>        <span class="bu">print</span>(<span class="st">&quot;Error: Could not open camera.&quot;</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true"></a>        <span class="cf">return</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;Camera opened successfully. Press &#39;q&#39; to quit.&quot;</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true"></a>    <span class="co"># To avoid the timeout error inside WSL maybe due to the video codecs</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true"></a>    cap.<span class="bu">set</span>(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(<span class="st">&#39;M&#39;</span>, <span class="st">&#39;J&#39;</span>, <span class="st">&#39;P&#39;</span>, <span class="st">&#39;G&#39;</span>))</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true"></a>    <span class="cf">while</span> <span class="va">True</span>:</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true"></a>        <span class="co"># Read a frame from the camera</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true"></a>        ret, frame <span class="op">=</span> cap.read()</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true"></a>        <span class="co"># If &#39;ret&#39; is False, it means there was an error reading the frame</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true"></a>        <span class="cf">if</span> <span class="kw">not</span> ret:</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true"></a>            <span class="bu">print</span>(<span class="st">&quot;Error: Could not read frame.&quot;</span>)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true"></a>            <span class="cf">break</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true"></a>        <span class="co"># Display the captured frame</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true"></a>        cv2.imshow(<span class="st">&#39;USB Camera Feed&#39;</span>, frame)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true"></a>        <span class="co"># Wait for 1 millisecond and check if the &#39;q&#39; key is pressed</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true"></a>        <span class="cf">if</span> cv2.waitKey(<span class="dv">1</span>) <span class="op">&amp;</span> <span class="bn">0xFF</span> <span class="op">==</span> <span class="bu">ord</span>(<span class="st">&#39;q&#39;</span>):</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true"></a>            <span class="cf">break</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true"></a>    <span class="co"># Release the camera and destroy all OpenCV windows</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true"></a>    cap.release()</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true"></a>    cv2.destroyAllWindows()</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;Camera released and windows closed.&quot;</span>)</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true"></a></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&quot;__main__&quot;</span>:</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true"></a>    read_usb_camera()</span></code></pre></div>
+<h1 id="instrucciones-para-añadir-dispositivos-a-wsl">Instrucciones para Añadir Dispositivos a WSL</h1>
+<h3 id="comandos-de-terminal">Comandos de Terminal</h3>
+<p>Los siguientes comandos deben ejecutarse en una <strong>terminal de PowerShell como administrador</strong>.</p>
+<ol type="1">
+<li><p><strong>Instalar <code>usbipd</code></strong>: <code>winget install usbipd</code></p></li>
+<li><p><strong>Identificar el dispositivo USB</strong>: <code>usbipd list</code></p></li>
+<li><p><strong>Habilitar la opción de compartir el dispositivo con WSL</strong>: Reemplace <code>X-X</code> con el <code>busid</code> del dispositivo deseado. <code>usbipd bind --busid=X-X</code></p></li>
+<li><p><strong>Adjuntar el dispositivo a WSL</strong>: <code>usbipd attach --wsl --busid=X-X</code></p></li>
+</ol>
+<table>
+<colgroup>
+<col style="width: 100%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"><strong>Comandos Opcionales</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Si aparece el error <code>"usbipd: error: Loading vhci_hcd failed."</code> al adjuntar una cámara, ejecute <code>sudo modprobe vhci_hcd</code> dentro de su entorno WSL.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Si obtiene un error similar a este: <code>VIDEOIO(V4L2:/dev/video0): select() timeout.</code>, podría deberse a la falta de códecs en el entorno WSL. Para solucionarlo, añada la siguiente línea a su código de OpenCV antes del bucle de captura: <code>camera.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'))</code>.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="código-python-para-probar-la-cámara-en-wsl">Código Python para Probar la Cámara en WSL</h3>
+<p>A continuación se presenta un script para probar si la cámara funciona correctamente dentro del entorno WSL.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="im">import</span> cv2</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a><span class="kw">def</span> read_usb_camera():</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a><span class="co">    Lee fotogramas de la primera cámara USB disponible y los muestra.</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a><span class="co">    Presione &#39;q&#39; para salir de la aplicación.</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a>    <span class="co"># Abre la cámara predeterminada (normalmente la primera cámara USB disponible)</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true"></a>    <span class="co"># El argumento &#39;0&#39; se refiere a la cámara predeterminada. Si tiene varias cámaras,</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true"></a>    <span class="co"># es posible que necesite probar &#39;1&#39;, &#39;2&#39;, etc.</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true"></a>    cap <span class="op">=</span> cv2.VideoCapture(<span class="dv">0</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true"></a>    <span class="co"># Verifica si la cámara se abrió correctamente</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true"></a>    <span class="cf">if</span> <span class="kw">not</span> cap.isOpened():</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true"></a>        <span class="bu">print</span>(<span class="st">&quot;Error: No se pudo abrir la cámara.&quot;</span>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true"></a>        <span class="cf">return</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;Cámara abierta correctamente. Presione &#39;q&#39; para salir.&quot;</span>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true"></a>    <span class="co"># Para evitar el error de tiempo de espera dentro de WSL, posiblemente debido a los códecs de video</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true"></a>    cap.<span class="bu">set</span>(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(<span class="st">&#39;M&#39;</span>, <span class="st">&#39;J&#39;</span>, <span class="st">&#39;P&#39;</span>, <span class="st">&#39;G&#39;</span>))</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true"></a>    <span class="cf">while</span> <span class="va">True</span>:</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true"></a>        <span class="co"># Lee un fotograma de la cámara</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true"></a>        ret, frame <span class="op">=</span> cap.read()</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true"></a>        <span class="co"># Si &#39;ret&#39; es False, significa que hubo un error al leer el fotograma</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true"></a>        <span class="cf">if</span> <span class="kw">not</span> ret:</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true"></a>            <span class="bu">print</span>(<span class="st">&quot;Error: No se pudo leer el fotograma.&quot;</span>)</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true"></a>            <span class="cf">break</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true"></a></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true"></a>        <span class="co"># Muestra el fotograma capturado</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true"></a>        cv2.imshow(<span class="st">&#39;Alimentación de Cámara USB&#39;</span>, frame)</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true"></a></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true"></a>        <span class="co"># Espera 1 milisegundo y verifica si se presiona la tecla &#39;q&#39;</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true"></a>        <span class="cf">if</span> cv2.waitKey(<span class="dv">1</span>) <span class="op">&amp;</span> <span class="bn">0xFF</span> <span class="op">==</span> <span class="bu">ord</span>(<span class="st">&#39;q&#39;</span>):</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true"></a>            <span class="cf">break</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true"></a></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true"></a>    <span class="co"># Libera la cámara y destruye todas las ventanas de OpenCV</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true"></a>    cap.release()</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true"></a>    cv2.destroyAllWindows()</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;Cámara liberada y ventanas cerradas.&quot;</span>)</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true"></a></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&quot;__main__&quot;</span>:</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true"></a>    read_usb_camera()</span></code></pre></div>

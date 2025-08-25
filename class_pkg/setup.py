@@ -35,6 +35,7 @@ setup(
             'cam_publisher = class_pkg.camera_publisher:main',
             'img_processor = class_pkg.image_processor:main',
             'img_converter = class_pkg.image_converter:main',
+            'compressed_image_viewer = class_pkg.compressed_image_viewer:main',
             'nav2_test = class_pkg.nav2_test:main'
         ],
     },

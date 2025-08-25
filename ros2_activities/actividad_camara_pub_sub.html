@@ -1,0 +1,114 @@
+<h1 id="actividad-procesamiento-de-imágenes-inter-nodo-en-ros2">Actividad: Procesamiento de Imágenes Inter-Nodo en ROS2</h1>
+<p>Esta actividad te guiará en la creación de dos nodos de ROS2 que trabajan juntos. Un nodo capturará video de una cámara web y el segundo nodo recibirá y procesará ese video en tiempo real.</p>
+<hr />
+<h2 id="objetivos-de-aprendizaje">Objetivos de Aprendizaje</h2>
+<p>Al completar con éxito esta actividad, serás capaz de:</p>
+<ul>
+<li>Crear un paquete de ROS2 con nodos de Python.</li>
+<li>Desarrollar un <strong>nodo publicador</strong> que utiliza OpenCV para capturar imágenes de una cámara.</li>
+<li>Usar <code>cv_bridge</code> para convertir imágenes de OpenCV (<code>cv::Mat</code>) en mensajes de ROS2 (<code>sensor_msgs/msg/Image</code>).</li>
+<li>Desarrollar un <strong>nodo suscriptor</strong> que recibe mensajes de imagen.</li>
+<li>Usar <code>cv_bridge</code> para convertir mensajes de imagen de ROS2 de vuelta a imágenes de OpenCV para su procesamiento.</li>
+<li>Construir y ejecutar dos nodos simultáneamente para establecer una tubería (pipeline) completa de procesamiento de imágenes.</li>
+</ul>
+<hr />
+<h2 id="instrucciones">Instrucciones</h2>
+<h3 id="parte-1-configurando-el-paquete">Parte 1: Configurando el Paquete</h3>
+<ol type="1">
+<li><p><strong>Navega a tu Espacio de Trabajo</strong>: Abre una terminal y ve al directorio <code>src</code> de tu espacio de trabajo de ROS2. <code>bash     cd ~/ros2_ws/src</code></p></li>
+<li><p><strong>Crea el Paquete de ROS2</strong>: Crea un nuevo paquete de Python llamado <code>ros2_inter_node_practice</code> con las dependencias necesarias. <code>bash     ros2 pkg create --build-type ament_python ros2_inter_node_practice --dependencies rclpy sensor_msgs cv_bridge image_transport</code></p></li>
+</ol>
+<h3 id="parte-2-creando-el-nodo-publicador-de-imágenes">Parte 2: Creando el Nodo Publicador de Imágenes</h3>
+<ol type="1">
+<li><p><strong>Navega al Directorio del Paquete</strong>: <code>bash     cd ~/ros2_ws/src/ros2_inter_node_practice/ros2_inter_node_practice</code></p></li>
+<li><p><strong>Crea el Archivo Python</strong>: Crea un nuevo archivo llamado <code>camera_publisher.py</code>. <code>bash     touch camera_publisher.py</code></p></li>
+<li><p><strong>Añade el Código</strong>: Abre <code>camera_publisher.py</code> y pega el siguiente código. Este nodo abrirá tu cámara web, capturará fotogramas y los publicará en el tópico <code>/camera/image_raw</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="im">import</span> rclpy</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a><span class="im">from</span> rclpy.node <span class="im">import</span> Node</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="im">from</span> sensor_msgs.msg <span class="im">import</span> Image</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a><span class="im">from</span> cv_bridge <span class="im">import</span> CvBridge</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a><span class="im">import</span> cv2</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a><span class="kw">class</span> CameraPublisher(Node):</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>(<span class="st">&#39;camera_publisher&#39;</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true"></a>        <span class="va">self</span>.publisher_ <span class="op">=</span> <span class="va">self</span>.create_publisher(Image, <span class="st">&#39;/camera/image_raw&#39;</span>, <span class="dv">10</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true"></a>        timer_period <span class="op">=</span> <span class="fl">0.05</span>  <span class="co"># segundos (para ~20 FPS)</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true"></a>        <span class="va">self</span>.timer <span class="op">=</span> <span class="va">self</span>.create_timer(timer_period, <span class="va">self</span>.timer_callback)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true"></a>        <span class="va">self</span>.cap <span class="op">=</span> cv2.VideoCapture(<span class="dv">0</span>) <span class="co"># Usa 0 para la cámara web por defecto</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true"></a>        <span class="va">self</span>.br <span class="op">=</span> CvBridge()</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true"></a>        <span class="va">self</span>.get_logger().info(<span class="st">&#39;Nodo Publicador de Cámara iniciado.&#39;</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true"></a>    <span class="kw">def</span> timer_callback(<span class="va">self</span>):</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true"></a>        ret, frame <span class="op">=</span> <span class="va">self</span>.cap.read()</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true"></a>        <span class="cf">if</span> ret:</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true"></a>            <span class="va">self</span>.publisher_.publish(<span class="va">self</span>.br.cv2_to_imgmsg(frame, <span class="st">&#39;bgr8&#39;</span>))</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true"></a>            <span class="co"># self.get_logger().info(&#39;Publicando fotograma de video&#39;) # Descomenta para depurar</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true"></a>        <span class="cf">else</span>:</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true"></a>            <span class="va">self</span>.get_logger().warn(<span class="st">&#39;No se pudo leer el fotograma de la cámara.&#39;</span>)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true"></a><span class="kw">def</span> main(args<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true"></a>    rclpy.init(args<span class="op">=</span>args)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true"></a>    camera_publisher <span class="op">=</span> CameraPublisher()</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true"></a>    rclpy.spin(camera_publisher)</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true"></a>    camera_publisher.destroy_node()</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true"></a>    rclpy.shutdown()</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&#39;__main__&#39;</span>:</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true"></a>    main()</span></code></pre></div></li>
+</ol>
+<h3 id="parte-3-creando-el-nodo-de-procesamiento-de-imágenes">Parte 3: Creando el Nodo de Procesamiento de Imágenes</h3>
+<ol type="1">
+<li><p><strong>Crea el Archivo Python</strong>: En el mismo directorio, crea un archivo llamado <code>image_processor.py</code>. <code>bash     touch image_processor.py</code></p></li>
+<li><p><strong>Añade el Código</strong>: Abre <code>image_processor.py</code> y pega el siguiente código. Este nodo se suscribe al tópico <code>/camera/image_raw</code>, convierte las imágenes a escala de grises y las muestra.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="im">import</span> rclpy</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="im">from</span> rclpy.node <span class="im">import</span> Node</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a><span class="im">from</span> sensor_msgs.msg <span class="im">import</span> Image</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a><span class="im">from</span> cv_bridge <span class="im">import</span> CvBridge</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a><span class="im">import</span> cv2</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a><span class="kw">class</span> ImageProcessor(Node):</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>(<span class="st">&#39;image_processor&#39;</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true"></a>        <span class="va">self</span>.subscription <span class="op">=</span> <span class="va">self</span>.create_subscription(</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true"></a>            Image,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true"></a>            <span class="st">&#39;/camera/image_raw&#39;</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true"></a>            <span class="va">self</span>.listener_callback,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true"></a>            <span class="dv">10</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true"></a>        <span class="va">self</span>.br <span class="op">=</span> CvBridge()</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true"></a>        <span class="va">self</span>.get_logger().info(<span class="st">&#39;Nodo Procesador de Imágenes iniciado.&#39;</span>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true"></a>    <span class="kw">def</span> listener_callback(<span class="va">self</span>, data):</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true"></a>        <span class="co"># self.get_logger().info(&#39;Recibiendo fotograma de video&#39;) # Descomenta para depurar</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true"></a>        current_frame <span class="op">=</span> <span class="va">self</span>.br.imgmsg_to_cv2(data, <span class="st">&quot;bgr8&quot;</span>)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true"></a></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true"></a>        <span class="co"># --- Lógica de Procesamiento de Imagen ---</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true"></a>        gray_frame <span class="op">=</span> cv2.cvtColor(current_frame, cv2.COLOR_BGR2GRAY)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true"></a></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true"></a>        <span class="co"># Muestra el fotograma procesado</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true"></a>        cv2.imshow(<span class="st">&quot;Video en Escala de Grises&quot;</span>, gray_frame)</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true"></a>        cv2.waitKey(<span class="dv">1</span>)</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true"></a></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true"></a><span class="kw">def</span> main(args<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true"></a>    rclpy.init(args<span class="op">=</span>args)</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true"></a>    image_processor <span class="op">=</span> ImageProcessor()</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true"></a>    rclpy.spin(image_processor)</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true"></a>    image_processor.destroy_node()</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true"></a>    cv2.destroyAllWindows()</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true"></a>    rclpy.shutdown()</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true"></a></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&#39;__main__&#39;</span>:</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true"></a>    main()</span></code></pre></div></li>
+</ol>
+<h3 id="parte-4-construyendo-y-ejecutando-los-nodos">Parte 4: Construyendo y Ejecutando los Nodos</h3>
+<ol type="1">
+<li><p><strong>Configura <code>setup.py</code></strong>: Abre el archivo <code>setup.py</code> ubicado en <code>~/ros2_ws/src/ros2_inter_node_practice/</code> y añade los <code>entry_points</code> para registrar tus nodos como ejecutables. <code>python     # Dentro de la función setup(), añade:     entry_points={         'console_scripts': [             'camera_pub = ros2_inter_node_practice.camera_publisher:main',             'img_proc = ros2_inter_node_practice.image_processor:main',         ],     },</code></p></li>
+<li><p><strong>Construye el Paquete</strong>: Navega a la raíz de tu espacio de trabajo y usa <code>colcon</code> para construir tu nuevo paquete. <code>bash     cd ~/ros2_ws     colcon build --packages-select ros2_inter_node_practice</code></p></li>
+<li><p><strong>Activa el “Source” del Espacio de Trabajo</strong>: En cada nueva terminal que uses, debes activar el archivo de configuración de tu espacio de trabajo. <code>bash     source install/setup.bash</code></p></li>
+<li><p><strong>Ejecuta los Nodos</strong>:</p>
+<ul>
+<li>En tu <strong>primera terminal</strong>, activa el “source” y ejecuta el publicador de la cámara: <code>bash     source ~/ros2_ws/install/setup.bash     ros2 run ros2_inter_node_practice camera_pub</code></li>
+<li>Abre una <strong>segunda terminal</strong>, activa el “source” y ejecuta el procesador de imágenes: <code>bash     source ~/ros2_ws/install/setup.bash     ros2 run ros2_inter_node_practice img_proc</code></li>
+</ul></li>
+</ol>
+<p>Ahora deberías ver una ventana titulada “Video en Escala de Grises” mostrando el video en vivo y procesado de tu cámara web.</p>
