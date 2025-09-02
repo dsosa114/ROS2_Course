@@ -17,6 +17,8 @@ $ ros2 run robot_state_publisher robot_state_publisher --ros-args -p robot_descr
     ros2 run ros_gz_bridge paramater_bridge --ros-args -p config_file:="PATH_TO_CONFIG.yaml"
 
 ## For Nav2
+- sudo apt install ros-humble-nav2-*
+- sudo apt install ros-humble-slam-toolbox
 - ros2 launch nav2_bringup navigation_launch.py use_sim_time:=True
 - ros2 launch slam_toolbox online_async_launch.py use_sim_time:=True
 - ros2 run nav2_map_server map_saver_cli -f my_world
