@@ -37,7 +37,8 @@ setup(
             'img_converter = class_pkg.image_converter:main',
             'compressed_image_viewer = class_pkg.compressed_image_viewer:main',
             'nav2_test = class_pkg.nav2_test:main',
-            'odom_path_recorder = class_pkg.path_recorder:main'
+            'odom_path_recorder = class_pkg.path_recorder:main',
+            'simple_battery_model = class_pkg.battery_model:main'
         ],
     },
 )
