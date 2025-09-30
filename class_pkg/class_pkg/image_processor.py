@@ -7,9 +7,14 @@ import cv2
 class ImageProcessor(Node):
     def __init__(self):
         super().__init__('image_processor')
+        # 1. Declare the parameter with a default value
+        self.declare_parameter('subscribe_topic', '/camera/image_raw')
+        
+        # 2. Get the parameter value
+        topic_name = self.get_parameter('subscribe_topic').get_parameter_value().string_value
         self.subscription = self.create_subscription(
             Image,
-            '/camera/image_raw',
+            topic_name,
             self.listener_callback,
             10)
         self.br = CvBridge()

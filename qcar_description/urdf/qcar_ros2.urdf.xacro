@@ -40,7 +40,7 @@ limitations under the License.
 <robot name="QCar" xmlns:xacro="http://www.ros.org/wiki/xacro">
   <xacro:macro name="QCar" params="parent prefix *origin">
     <!-- includes -->
-    <xacro:include filename="$(find qcar_description)/urdf/qcar.gazebo.xacro" />
+    <!-- <xacro:include filename="$(find qcar_description)/urdf/qcar.gazebo.xacro" /> -->
     <xacro:include filename="$(find qcar_description)/urdf/qcar.materials.xacro" />
 
     <!-- Degree-to-radian conversions -->
@@ -148,11 +148,11 @@ limitations under the License.
     <!-- base_link must have geometry so that its axes can be displayed in
          rviz. -->
     
-    <joint name="$base_joint" type="fixed">
+    <!-- <joint name="$base_joint" type="fixed">
       <xacro:insert_block name="origin" />
       <parent link="${parent}"/>
       <child link="${prefix}base_link" />
-    </joint>
+    </joint> -->
 
    <link name="base_link" />
 
@@ -163,9 +163,10 @@ limitations under the License.
         <origin rpy="0 0 0" xyz="0 0 0"/>
         <geometry>
     <!-- <box size="${chassis_length} ${chassis_width} ${chassis_height}"/> -->
-    <mesh filename="file://$(find qcar_description)/meshes/QCarBody.stl" scale="0.001 0.001 0.001"/>
+          <mesh filename="file://$(find qcar_description)/meshes/QCarBody.stl" scale="0.001 0.001 0.001"/>
         </geometry>
         <!-- <material name="chassis_mat"/> -->
+        <material name="grey"/>
       </visual>
 
       <collision>
@@ -173,13 +174,13 @@ limitations under the License.
         <origin rpy="0 0 0" xyz="0 0 0"/>
         <geometry>
     <!-- <box size="${chassis_length} ${chassis_width} ${chassis_height}"/> -->
-    <mesh filename="file://$(find qcar_description)/meshes/QCarBody.stl" scale="0.001 0.001 0.001"/>
+          <mesh filename="file://$(find qcar_description)/meshes/QCarBody.stl" scale="0.001 0.001 0.001"/>
         </geometry>
       </collision>
 
       <xacro:solid_cuboid_inertial
-    width="${chassis_length}" depth="${chassis_width}"
-    height="${chassis_height}" mass="${chassis_mass}">
+                                  width="${chassis_length}" depth="${chassis_width}"
+                                  height="${chassis_height}" mass="${chassis_mass}">
         <origin xyz="0 0 0"/>
       </xacro:solid_cuboid_inertial>
       <!-- <inertial>
@@ -252,7 +253,8 @@ limitations under the License.
         <!-- <axis xyz="0 1 0" /> -->
         <!-- <origin xyz=".2 0 0" rpy="0 0 0"/> -->
         <!-- ___________________xyz is wrong, need to update_______________________________ -->
-        <origin rpy="0 0 -1.5708" xyz="0.12887 -0.06755 0.093029"/>
+        <!-- <origin rpy="0 0 -1.5708" xyz="0.12887 -0.06755 0.093029"/> -->
+        <origin rpy="0 0 -1.5708" xyz="0.012887 -0.06755 0.093029"/>
         <!-- <origin rpy="0 0 0" xyz="0 0 0"/> -->
         <parent link="base"/>
         <child link="camera_csi_right"/>
@@ -273,7 +275,8 @@ limitations under the License.
         <!-- <axis xyz="0 1 0" /> -->
         <!-- <origin xyz=".2 0 0" rpy="0 0 0"/> -->
         <!-- ___________________xyz is wrong, need to update_______________________________ -->
-        <origin rpy="0 0 1.5708" xyz="0.12784 0.052497 0.093029"/>
+        <!-- <origin rpy="0 0 1.5708" xyz="0.12784 0.052497 0.093029"/> -->
+         <origin rpy="0 0 1.5708" xyz="0.012784 0.052497 0.093029"/>
         <!-- <origin rpy="0 0 0" xyz="0 0 0"/> -->
         <parent link="base"/>
         <child link="camera_csi_left"/>
@@ -321,23 +324,25 @@ limitations under the License.
       <parent link="left_steering_link"/>
       <child link="left_front_axle_carrier"/>
       <axis xyz = "0 0 1"/>
-      <limit lower="-0.523599" upper="0.523599" effort="0.5649" velocity="4.553"/>
+      <!-- <limit lower="-0.523599" upper="0.523599" effort="0.5649" velocity="4.553"/> -->
+      <limit lower="-0.3" upper="0.3" effort="0.5649" velocity="4.553"/>
     </joint>
     
     <link name="left_front_axle_carrier">
       <xacro:null_inertial/>
     </link>
     
-    <joint name="left_front_axle" type="fixed">
+    <joint name="left_front_axle" type="continuous">
       <parent link="left_front_axle_carrier"/>
       <child link="left_front_wheel"/>
-      <axis xyz="0 0 1"/>
+      <axis xyz="0 1 0"/>
       <origin rpy="0 0 3.14159"/>
       <limit effort="5.12766" velocity="244.8696"/>
       <dynamics damping="0.1" friction="0.1"/>
+      <mimic joint="right_front_axle" multiplier="-1.0" offset="0"/>
     </joint>
     
-    <!-- <transmission name="left_front_axle_trans">
+    <transmission name="left_front_axle_trans">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="left_front_axle">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
@@ -345,14 +350,14 @@ limitations under the License.
       <actuator name="left_front_axle_act">
         <mechanicalReduction>1</mechanicalReduction>
       </actuator>
-    </transmission> -->
+    </transmission>
     <link name="left_front_wheel">
       <visual>
         <origin rpy="0 0 0" xyz="0 0 0"/>
         <geometry>
-    <mesh filename="file://$(find qcar_description)/meshes/QCarWheel.stl" scale="0.001 0.001 0.001"/>
+          <mesh filename="file://$(find qcar_description)/meshes/QCarWheel.stl" scale="0.001 0.001 0.001"/>
         </geometry>
-        <material name="red"/>
+        <material name="black"/>
       </visual>
       <collision>
         <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -365,7 +370,7 @@ limitations under the License.
       height="${tire_width}" mass="${wheel_mass}"/>
     </link>
 
-    <!-- <transmission name="left_steering_trans">
+    <transmission name="left_steering_trans">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="left_steering_joint">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
@@ -373,7 +378,7 @@ limitations under the License.
       <actuator name="left_steering_act">
         <mechanicalReduction>1</mechanicalReduction>
       </actuator>
-    </transmission> -->
+    </transmission>
 
   <!-- ___base_link - > right_front_position_joint (fixed) -> right_steering_link -> right_steering_joint(revolote) -> right_front_axle_carrier -> right_front_axle(joint) (continuous) -> right_front_wheel_______________ -->
 
@@ -387,7 +392,7 @@ limitations under the License.
       <!--<limit effort="${axle_eff_limit}" velocity="${axle_vel_limit}"/>-->
       <dynamics damping="0.1" friction="0.1"/>
     </joint>
-    <!-- <transmission name="right_front_axle_trans">
+    <transmission name="right_front_axle_trans">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="right_front_axle">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
@@ -395,14 +400,14 @@ limitations under the License.
       <actuator name="right_front_axle_act">
         <mechanicalReduction>1</mechanicalReduction>
       </actuator>
-    </transmission> -->
+    </transmission>
     <link name="right_front_wheel">
       <visual>
         <origin rpy="0 0 0" xyz="0 0 0"/>
         <geometry>
     <mesh filename="file://$(find qcar_description)/meshes/QCarWheel.stl" scale="0.001 0.001 0.001"/>
         </geometry>
-        <material name="red"/>
+        <material name="black"/>
       </visual>
       <collision>
         <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -438,13 +443,15 @@ limitations under the License.
       </collision>
     </link>
 
-    <joint name="right_steering_joint" type="fixed">
+    <joint name="right_steering_joint" type="revolute">
       <parent link="right_steering_link"/>
       <child link="right_front_axle_carrier"/>
       <axis xyz = "0 0 1"/>
-      <limit lower="0.523599" upper="0.523599" effort="0.5649" velocity="4.553"/>
+      <!-- <limit lower="0.523599" upper="0.523599" effort="0.5649" velocity="4.553"/> -->
+      <limit lower="-0.3" upper="0.3" effort="0.5649" velocity="4.553"/>
+      <mimic joint="left_steering_joint" multiplier="1.0" offset="0"/>
     </joint>
-    <!-- <transmission name="right_steering_trans">
+    <transmission name="right_steering_trans">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="right_steering_joint">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
@@ -452,7 +459,7 @@ limitations under the License.
       <actuator name="right_steering_act">
         <mechanicalReduction>1</mechanicalReduction>
       </actuator>
-    </transmission> -->
+    </transmission>
 
     <!-- The upper portion is for the front -->
     <!-- Now is for the rear which only has axles -->
@@ -468,7 +475,7 @@ limitations under the License.
       <!--<limit effort="${axle_eff_limit}" velocity="${axle_vel_limit}"/>-->
       <dynamics damping="0.1" friction="0.1"/>
     </joint>
-    <!-- <transmission name="left_rear_axle_trans">
+    <transmission name="left_rear_axle_trans">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="left_rear_axle">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
@@ -476,14 +483,14 @@ limitations under the License.
       <actuator name="left_rear_axle_act">
         <mechanicalReduction>1</mechanicalReduction>
       </actuator>
-    </transmission> -->
+    </transmission>
     <link name="left_rear_wheel">
       <visual>
         <origin rpy="0 0 0" xyz="0 0 0"/>
         <geometry>
     <mesh filename="file://$(find qcar_description)/meshes/QCarWheel.stl" scale="0.001 0.001 0.001"/>
         </geometry>
-        <material name="red"/>
+        <material name="black"/>
       </visual>
       <collision>
         <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -514,7 +521,7 @@ limitations under the License.
       <!--<limit effort="${axle_eff_limit}" velocity="${axle_vel_limit}"/>-->
       <dynamics damping="0.1" friction="0.1"/>
     </joint>
-    <!-- <transmission name="right_rear_axle_trans">
+    <transmission name="right_rear_axle_trans">
       <type>transmission_interface/SimpleTransmission</type>
       <joint name="right_rear_axle">
         <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
@@ -522,14 +529,14 @@ limitations under the License.
       <actuator name="right_rear_axle_act">
         <mechanicalReduction>1</mechanicalReduction>
       </actuator>
-    </transmission> -->
+    </transmission>
     <link name="right_rear_wheel">
       <visual>
         <origin rpy="0 0 0" xyz="0 0 0"/>
         <geometry>
     <mesh filename="file://$(find qcar_description)/meshes/QCarWheel.stl" scale="0.001 0.001 0.001"/>
         </geometry>
-        <material name="red"/>
+        <material name="black"/>
       </visual>
       <collision>
         <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -549,7 +556,31 @@ limitations under the License.
     </joint>
 
     <!-- The above is for the wheels and turning etc -->
+    <!-- Gazebo Parameters -->
+    <gazebo reference="base">
+      <mu1>0.0001</mu1>
+      <mu2>0.0001</mu2>
+    </gazebo>
 
+    <gazebo reference="right_front_wheel">
+      <mu1>100.0</mu1>
+      <mu2>100.0</mu2>
+    </gazebo>
+
+    <gazebo reference="left_front_wheel">
+      <mu1>100.0</mu1>
+      <mu2>100.0</mu2>
+    </gazebo>
+      
+    <gazebo reference="right_rear_wheel">
+      <mu1>100.0</mu1>
+      <mu2>100.0</mu2>
+    </gazebo>
+
+    <gazebo reference="left_rear_wheel">
+      <mu1>100.0</mu1>
+      <mu2>100.0</mu2>
+    </gazebo>
     
     <!--<gazebo>
       <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so" />
