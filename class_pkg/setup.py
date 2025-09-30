@@ -38,7 +38,8 @@ setup(
             'compressed_image_viewer = class_pkg.compressed_image_viewer:main',
             'nav2_test = class_pkg.nav2_test:main',
             'odom_path_recorder = class_pkg.path_recorder:main',
-            'simple_battery_model = class_pkg.battery_model:main'
+            'simple_battery_model = class_pkg.battery_model:main',
+            'joystick_controller = class_pkg.joystick_controller:main'
         ],
     },
 )
