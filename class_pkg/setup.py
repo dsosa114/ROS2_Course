@@ -36,7 +36,8 @@ setup(
             'img_processor = class_pkg.image_processor:main',
             'img_converter = class_pkg.image_converter:main',
             'compressed_image_viewer = class_pkg.compressed_image_viewer:main',
-            'nav2_test = class_pkg.nav2_test:main'
+            'nav2_test = class_pkg.nav2_test:main',
+            'odom_path_recorder = class_pkg.path_recorder:main'
         ],
     },
 )
